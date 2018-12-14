@@ -8,46 +8,50 @@ from utilities import preferences
 tests = 100
 max_iterations = 10,000
 
+# Set the initialisation function for agent preferences: [uniform, other]
+init_preference = preferences.uniform_pref_generator
+
 def setup(num_of_agents, states, agents: [], rand):
     """
     This setup function runs before any other part of the code. Starting with
     the creation of agents and the initialisation of relevant variables.
     """
 
-    init_preference = preferences.uniform_pref_generator
-
     agents += [Agent(init_preference(states, rand)) for x in range(num_of_agents)]
 
     return
 
-
 def main_loop():
+    """
+    The main loop performs various actions in sequence until certain conditions are
+    met, or the maximum number of iterations is reached.
+    """
     return
 
 
 def main():
 
-    # Parse the arguments of the program.
+    # Parse the arguments of the program, e.g., agents, states, random init.
     parser = argparse.ArgumentParser(description="Preference-based distributed decision-making in a multi-agent environment.")
-    # Number of agents.
     parser.add_argument("agents", type=int)
-    # Number of states.
     parser.add_argument("states", type=int)
-    # Random seeding
     parser.add_argument("-r", "--random", type=bool, help="Random seeding of the RNG.")
     arguments = parser.parse_args()
 
-    agents = list()
+    rand = random.Random().seed(128) if not arguments.random \
+                                     else random.Random().seed()
 
-    # Create an instance of a RNG that is either seeded for consistency of simulation
-    # results, or create using a random seed for further testing.
-    rand = random.Random().seed(128) if not arguments.random else random.Random().seed()
+    # Repeat the setup and loop for the number of simulation runs required
+    for test in range(tests):
+        agents = list()
+        # Create an instance of a RNG that is either seeded for consistency of simulation
+        # results, or create using a random seed for further testing.
 
-    # Initial setup of agents and environment.
-    setup(arguments.agents, arguments.states, agents, rand)
+        # Initial setup of agents and environment.
+        setup(arguments.agents, arguments.states, agents, rand)
 
-    # Main loop of the experiments.
-    main_loop()
+        # Main loop of the experiments.
+        main_loop()
 
     # Recording of results.
 
