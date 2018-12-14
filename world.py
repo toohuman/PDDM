@@ -8,7 +8,7 @@ from agents.agent import Agent
 from utilities import operators
 from utilities import preferences
 
-tests = 100
+tests = 1#00
 max_iterations = 10,000
 
 mode = "symmetric" # ["symmetric" | "asymmetric"]
@@ -32,15 +32,29 @@ def main_loop(agents: [], states, mode, rand):
     met, or the maximum number of iterations is reached.
     """
 
-    # Agents receive evidence and perform evidential updating
-    evidence = np.full((states, states), -1, int)
-    index_i = random.randint(0, states - 1)
-    index_j = index_i
-    while index_j == index_i:
-        index_j = random.randint(0, states - 1)
+    # For each agent, generate a random piece of evidence and have the agent perform
+    # evidential updating
+    for agent in agents:
+        evidence = np.zeros((states, states), int)
+        index_i = random.randint(0, states - 1)
+        index_j = index_i
+        while index_j == index_i:
+            index_j = random.randint(0, states - 1)
 
-    print(evidence)
+        if index_i < index_j:
+            evidence[index_i][index_j] = -1
+            evidence[index_j][index_i] = 1
+        else:
+            evidence[index_i][index_j] = 1
+            evidence[index_j][index_i] = -1
 
+        print(evidence)
+
+        agent.update_preferences(operators.combine(agent.preferences, evidence))
+
+        print(agent.preferences)
+
+    return
 
     # Agents then combine at random
 
