@@ -3,22 +3,20 @@ import random
 import sys
 
 from agents.agent import Agent
-import utilities
+from utilities import preferences
 
 tests = 100
 max_iterations = 10,000
 
-agents = []
-
-def setup(num_of_agents):
+def setup(num_of_agents, states, agents: [], rand):
     """
     This setup function runs before any other part of the code. Starting with
     the creation of agents and the initialisation of relevant variables.
     """
 
-    random_pref = utilities.preferences.uniform_pref_generator
+    init_preference = preferences.uniform_pref_generator
 
-    agents = [Agent(random_pref(rand)) for x in range(num_of_agents)]
+    agents += [Agent(init_preference(states, rand)) for x in range(num_of_agents)]
 
     return
 
@@ -29,19 +27,31 @@ def main_loop():
 
 def main():
 
+    # Parse the arguments of the program.
     parser = argparse.ArgumentParser(description="Preference-based distributed decision-making in a multi-agent environment.")
-
+    # Number of agents.
+    parser.add_argument("agents", type=int)
+    # Number of states.
+    parser.add_argument("states", type=int)
+    # Random seeding
+    parser.add_argument("-r", "--random", type=bool, help="Random seeding of the RNG.")
     arguments = parser.parse_args()
 
-    num_of_agents = 100
+    agents = list()
 
-    # Initial setup of agents and environment
-    setup(num_of_agents)
+    # Create an instance of a RNG that is either seeded for consistency of simulation
+    # results, or create using a random seed for further testing.
+    rand = random.Random().seed(128) if not arguments.random else random.Random().seed()
 
-    # Main loop of the experiments
+    # Initial setup of agents and environment.
+    setup(arguments.agents, arguments.states, agents, rand)
+
+    # Main loop of the experiments.
     main_loop()
 
-    # Recording of results
+    # Recording of results.
+
+
     sys.exit(1)
 
 

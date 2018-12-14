@@ -5,7 +5,6 @@ class Agent:
 
     def __init__(self, preferences):
 
-        print("Agent created.")
         self.preferences = preferences
         self.interactions = 0
 
