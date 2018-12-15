@@ -54,6 +54,8 @@ def main_loop(agents: [], states, mode, rand):
 
         print(agent.preferences)
 
+        operators.transitive_closure(agent.preferences)
+
     return
 
     # Agents then combine at random
@@ -82,8 +84,9 @@ def main():
     parser.add_argument("-r", "--random", type=bool, help="Random seeding of the RNG.")
     arguments = parser.parse_args()
 
-    rand = random.Random().seed(128) if not arguments.random \
-                                     else random.Random().seed()
+    rand = random.Random()
+    # This needs to be fixed using GETSTATE and SETSTATE
+    rand.seed(128) if arguments.random == None else rand.seed()
 
     # Repeat the setup and loop for the number of simulation runs required
     for test in range(tests):
