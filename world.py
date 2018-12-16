@@ -50,7 +50,7 @@ def main_loop(agents: [], states, mode, random_instance):
 
         print(evidence)
 
-        agent.update_preferences(operators.combine(agent.preferences, evidence))
+        agent.evidential_updating(operators.combine(agent.preferences, evidence))
 
         print(agent.preferences)
 
@@ -101,6 +101,7 @@ def main():
         main_loop(agents, arguments.states, mode, rand)
 
     # Recording of results.
+
 
 
     sys.exit(1)
