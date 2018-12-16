@@ -1,6 +1,6 @@
 import numpy as np
 
-def uniform_pref_generator(states, rand):
+def ignorant_pref_generator(states):
     """ Create a matrix of n x n zeros: a uniform, "unknown" preference. """
 
     # Set the preferences to all unknowns (0).

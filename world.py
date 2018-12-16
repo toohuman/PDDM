@@ -14,19 +14,19 @@ max_iterations = 10,000
 mode = "symmetric" # ["symmetric" | "asymmetric"]
 
 # Set the initialisation function for agent preferences: [uniform, other]
-init_preferences = preferences.uniform_pref_generator
+init_preferences = preferences.ignorant_pref_generator
 
-def setup(num_of_agents, states, agents: [], rand):
+def setup(num_of_agents, states, agents: [], random_instance):
     """
     This setup function runs before any other part of the code. Starting with
     the creation of agents and the initialisation of relevant variables.
     """
 
-    agents += [Agent(init_preferences(states, rand)) for x in range(num_of_agents)]
+    agents += [Agent(init_preferences(states)) for x in range(num_of_agents)]
 
     return
 
-def main_loop(agents: [], states, mode, rand):
+def main_loop(agents: [], states, mode, random_instance):
     """
     The main loop performs various actions in sequence until certain conditions are
     met, or the maximum number of iterations is reached.
@@ -36,10 +36,10 @@ def main_loop(agents: [], states, mode, rand):
     # evidential updating
     for agent in agents:
         evidence = np.zeros((states, states), int)
-        index_i = random.randint(0, states - 1)
+        index_i = random_instance.randint(0, states - 1)
         index_j = index_i
         while index_j == index_i:
-            index_j = random.randint(0, states - 1)
+            index_j = random_instance.randint(0, states - 1)
 
         if index_i < index_j:
             evidence[index_i][index_j] = -1
