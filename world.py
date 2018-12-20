@@ -12,6 +12,7 @@ tests = 1#00
 max_iterations = 10,000
 
 mode = "symmetric" # ["symmetric" | "asymmetric"]
+demo_mode = True
 
 # Set the initialisation function for agent preferences: [uniform, other]
 init_preferences = preferences.ignorant_pref_generator
@@ -35,18 +36,8 @@ def main_loop(agents: [], states, mode, random_instance):
     # For each agent, generate a random piece of evidence and have the agent perform
     # evidential updating
     for agent in agents:
-        evidence = np.zeros((states, states), int)
-        index_i = random_instance.randint(0, states - 1)
-        index_j = index_i
-        while index_j == index_i:
-            index_j = random_instance.randint(0, states - 1)
-
-        if index_i < index_j:
-            evidence[index_i][index_j] = -1
-            evidence[index_j][index_i] = 1
-        else:
-            evidence[index_i][index_j] = 1
-            evidence[index_j][index_i] = -1
+        # Currently, just testing with random evidence
+        evidence = preferences.random_evidence(states, random_instance)
 
         print(evidence)
 
@@ -88,6 +79,9 @@ def main():
     # This needs to be fixed using GETSTATE and SETSTATE
     rand.seed(128) if arguments.random == None else rand.seed()
 
+    # Set up the collecting of results
+
+
     # Repeat the setup and loop for the number of simulation runs required
     for test in range(tests):
         agents = list()
@@ -101,7 +95,10 @@ def main():
         main_loop(agents, arguments.states, mode, rand)
 
     # Recording of results.
-
+    # if demo_mode:
+        # Output plots while running simulations, but do not record the results.
+    # else:
+        # Record the results but skip the plotting.
 
 
     sys.exit(1)
