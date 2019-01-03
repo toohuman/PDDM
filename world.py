@@ -69,7 +69,8 @@ def main_loop(agents: [], states, mode, random_instance):
 def main():
 
     # Parse the arguments of the program, e.g., agents, states, random init.
-    parser = argparse.ArgumentParser(description="Preference-based distributed decision-making in a multi-agent environment.")
+    parser = argparse.ArgumentParser(description="Preference-based distributed\
+    decision-making in a multi-agent environment.")
     parser.add_argument("agents", type=int)
     parser.add_argument("states", type=int)
     parser.add_argument("-r", "--random", type=bool, help="Random seeding of the RNG.")

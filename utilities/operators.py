@@ -24,7 +24,20 @@ def transitive_closure(matrix):
     Form the transitive closure of the input matrix by filling in relations
     where they are missing.
     """
-    closure = set()
-    print(np.where(matrix == 1))
+
+    matrix[1][0] = 1
+    print(matrix)
+
+    # Identify the binary relations of states (p > q)
+    rows, columns = np.where(matrix == 1)
+    closure = [(rows[i], columns[i]) for i in range(len(rows))]
+    print(closure)
+
+    # For each pair (p > q), identify q's
+    pairs = [[pair2 for pair2 in closure if pair2[0] == pair1[1]] for pair1 in closure]
+
+    print(closure)
 
     return
+
+# Identify and remove cycles in the graph
