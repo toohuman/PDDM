@@ -9,10 +9,12 @@ from utilities import operators
 from utilities import preferences
 
 tests = 1#00
-max_iterations = 10,000
+max_iterations = 10000
 
 mode = "symmetric" # ["symmetric" | "asymmetric"]
 demo_mode = True
+
+evidence_rate = 0.1
 
 # Set the initialisation function for agent preferences: [uniform, other]
 init_preferences = preferences.ignorant_pref_generator
@@ -39,13 +41,18 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
         # Currently, just testing with random evidence
         evidence = preferences.random_evidence(states, random_instance)
 
-        print(evidence)
+        print(agent.preferences)
 
-        agent.evidential_updating(operators.combine(agent.preferences, evidence))
+        if random_instance.random() > evidence_rate:
+            agent.evidential_updating(operators.combine(agent.preferences, evidence))
 
         print(agent.preferences)
 
-        operators.transitive_closure(agent.preferences)
+        agent.update()
+
+        print(agent.preferences)
+
+        print("-----------------------")
 
     return
 
@@ -58,7 +65,11 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
         while agent2 == agent1:
             agent2 = agents[random.randint(0,len(agents) - 1)]
 
-        print(operators.combine(agent1.preferences, agent2.preferences))
+        new_preference = operators.combine(agent1.preferences, agent2.preferences)
+        print(new_preference)
+        # Symmetric, so both agents adopt the combination preference
+        agent1.update_preferences(new_preference)
+        agent2.update_preferences(new_preference)
 
     # Asymmetric
     # if mode == "asymmetric":
@@ -76,9 +87,9 @@ def main():
     parser.add_argument("-r", "--random", type=bool, help="Random seeding of the RNG.")
     arguments = parser.parse_args()
 
-    rand = random.Random()
+    random_instance = random.Random()
     # This needs to be fixed using GETSTATE and SETSTATE
-    rand.seed(128) if arguments.random == None else rand.seed()
+    random_instance.seed(128) if arguments.random == None else rand.seed()
 
     # Set up the collecting of results
 
@@ -90,10 +101,11 @@ def main():
         # results, or create using a random seed for further testing.
 
         # Initial setup of agents and environment.
-        setup(arguments.agents, arguments.states, agents, rand)
+        setup(arguments.agents, arguments.states, agents, random_instance)
 
         # Main loop of the experiments.
-        main_loop(agents, arguments.states, mode, rand)
+        for iteration in range(max_iterations):
+            main_loop(agents, arguments.states, mode, random_instance)
 
     # Recording of results.
     # if demo_mode:

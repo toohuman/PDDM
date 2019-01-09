@@ -25,17 +25,16 @@ def transitive_closure(matrix):
     where they are missing.
     """
 
-    matrix[1][0] = 1
-    print(matrix)
-
     # Identify the binary relations of states (p > q)
     rows, columns = np.where(matrix == 1)
     closure = set([(rows[i], columns[i]) for i in range(len(rows))])
+    # Copy the initial closure of the preference matrix for comparison at the end
+    initial_closure = closure.copy()
 
+    # Identify the transitive relations
     # Source: https://stackoverflow.com/questions/8673482/transitive-closure-python-tuples
-    # Form the transitive closure
     while True:
-        new_relations = set((w,x) for x,y in closure for q,w in closure if q == y)
+        new_relations = set((x,w) for x,y in closure for q,w in closure if q == y)
         # Form the union of the new relations with the current closure
         closure_until_now = closure | new_relations
 
@@ -44,8 +43,11 @@ def transitive_closure(matrix):
 
         closure = closure_until_now
 
-    print(closure)
+    # Form the transitive closure
+    for x,y in closure:
+        matrix[x][y] = 1
+        matrix[y][x] = -1
 
-    return closure
+    return True if initial_closure == closure else False
 
 # Identify and remove cycles in the graph
