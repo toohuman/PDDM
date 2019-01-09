@@ -27,7 +27,7 @@ def setup(num_of_agents, states, agents: [], random_instance):
 
     return
 
-def main_loop(agents: [], states, mode, random_instance):
+def main_loop(agents: [], states: int, mode: str, random_instance):
     """
     The main loop performs various actions in sequence until certain conditions are
     met, or the maximum number of iterations is reached.

@@ -34,9 +34,10 @@ def transitive_closure(matrix):
     print(closure)
 
     # For each pair (p > q), identify q's
-    pairs = [[pair2 for pair2 in closure if pair2[0] == pair1[1]] for pair1 in closure]
+    pairs = [[second_pair for second_pair in closure \
+            if second_pair[0] == first_pair[1]] for first_pair in closure]
 
-    print(closure)
+    print(pairs)
 
     return
 
