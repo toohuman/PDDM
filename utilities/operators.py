@@ -32,6 +32,7 @@ def transitive_closure(matrix):
     rows, columns = np.where(matrix == 1)
     closure = set([(rows[i], columns[i]) for i in range(len(rows))])
 
+    # Source: https://stackoverflow.com/questions/8673482/transitive-closure-python-tuples
     # Form the transitive closure
     while True:
         new_relations = set((w,x) for x,y in closure for q,w in closure if q == y)
