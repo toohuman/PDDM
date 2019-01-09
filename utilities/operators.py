@@ -30,15 +30,21 @@ def transitive_closure(matrix):
 
     # Identify the binary relations of states (p > q)
     rows, columns = np.where(matrix == 1)
-    closure = [(rows[i], columns[i]) for i in range(len(rows))]
+    closure = set([(rows[i], columns[i]) for i in range(len(rows))])
+
+    # Form the transitive closure
+    while True:
+        new_relations = set((w,x) for x,y in closure for q,w in closure if q == y)
+        # Form the union of the new relations with the current closure
+        closure_until_now = closure | new_relations
+
+        if closure_until_now == closure:
+            break
+
+        closure = closure_until_now
+
     print(closure)
 
-    # For each pair (p > q), identify q's
-    pairs = [[second_pair for second_pair in closure \
-            if second_pair[0] == first_pair[1]] for first_pair in closure]
-
-    print(pairs)
-
-    return
+    return closure
 
 # Identify and remove cycles in the graph
