@@ -35,6 +35,12 @@ class Agent:
             self.since_change = 0
             operators.transitive_closure(self.preferences)
 
+
+    def steady_state(self):
+        return True if self.since_change >= 100 else False
+
+
+
     def evidential_updating(self, preferences):
         """
         Update the agent's preferences based on the evidence they received.

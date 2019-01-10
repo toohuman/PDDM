@@ -1,4 +1,5 @@
 import argparse
+import math
 import random
 import sys
 
@@ -8,13 +9,13 @@ from agents.agent import Agent
 from utilities import operators
 from utilities import preferences
 
-tests = 1#00
+tests = 100
 max_iterations = 10000
 
 mode = "symmetric" # ["symmetric" | "asymmetric"]
 demo_mode = True
 
-evidence_rate = 0.1
+evidence_rate = 1/100
 
 # Set the initialisation function for agent preferences: [uniform, other]
 init_preferences = preferences.ignorant_pref_generator
@@ -37,22 +38,28 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
 
     # For each agent, generate a random piece of evidence and have the agent perform
     # evidential updating
+    reached_convergence = True
     for agent in agents:
         # Currently, just testing with random evidence
         evidence = preferences.random_evidence(states, random_instance)
 
-        print(agent.preferences)
+        # print(agent.preferences)
 
-        if random_instance.random() > evidence_rate:
+        if random_instance.random() <= evidence_rate:
             agent.evidential_updating(operators.combine(agent.preferences, evidence))
 
-        print(agent.preferences)
+        # print(agent.preferences)
 
         agent.update()
 
-        print(agent.preferences)
+        # print(agent.preferences)
 
-        print("-----------------------")
+        # print("-----------------------")
+
+        reached_convergence &= agent.steady_state()
+
+    if reached_convergence:
+        return True
 
     #################################
     # Agents then combine at random #
@@ -66,7 +73,7 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
             agent2 = agents[random.randint(0,len(agents) - 1)]
 
         new_preference = operators.combine(agent1.preferences, agent2.preferences)
-        print(new_preference)
+        # print(new_preference)
         # Symmetric, so both agents adopt the combination preference
         agent1.update_preferences(new_preference)
         agent2.update_preferences(new_preference)
@@ -74,7 +81,7 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
     # Asymmetric
     # if mode == "asymmetric":
 
-    return
+    return False
 
 
 def main():
@@ -89,7 +96,7 @@ def main():
 
     random_instance = random.Random()
     # This needs to be fixed using GETSTATE and SETSTATE
-    random_instance.seed(128) if arguments.random == None else rand.seed()
+    random_instance.seed(128) if arguments.random == None else random_instance.seed()
 
     # Set up the collecting of results
 
@@ -105,7 +112,9 @@ def main():
 
         # Main loop of the experiments.
         for iteration in range(max_iterations):
-            main_loop(agents, arguments.states, mode, random_instance)
+            if main_loop(agents, arguments.states, mode, random_instance):
+                print(test, ":", iteration)
+                break
 
     # Recording of results.
     # if demo_mode:

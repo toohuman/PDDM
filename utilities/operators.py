@@ -45,3 +45,6 @@ def transitive_closure(matrix):
     return True if initial_closure == closure else False
 
 # Identify and remove cycles in the graph
+def destroy_cycles(matrix):
+    """
+    """
