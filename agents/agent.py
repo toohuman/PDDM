@@ -19,6 +19,12 @@ class Agent:
         self.since_change = 0
 
     def update(self):
+        """
+        Agent update method to be called once every iteration, after evidential
+        updating and/or belief merging takes place, if they occur.
+        This way, the agent always tracks "no. of iterations since change" as opposed
+        to just "interactions" (evidence/consensus).
+        """
 
         if self.no_change:
             self.since_change += 1

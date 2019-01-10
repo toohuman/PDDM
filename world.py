@@ -54,9 +54,9 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
 
         print("-----------------------")
 
-    return
-
-    # Agents then combine at random
+    #################################
+    # Agents then combine at random #
+    #################################
 
     # Symmetric
     if mode == "symmetric":
