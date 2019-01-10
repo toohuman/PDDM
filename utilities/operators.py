@@ -6,16 +6,10 @@ def combine(prefs1, prefs2):
     """
 
     preferences = np.add(prefs1, prefs2)
-    for x in range(len(preferences)):
-        preferences[x][x] = -1
-
+    # Ensure diagonals remain false
+    np.fill_diagonal(preferences, -1)
     # Normalising extreme values: 2, -2.
-    for i in range(len(preferences)):
-        for j in range(len(preferences[i])):
-            if preferences[i][j] == 2:
-                preferences[i][j] = 1
-            elif preferences[i][j] == -2:
-                preferences[i][j] = -1
+    np.clip(preferences, -1, 1, preferences)
 
     return preferences
 

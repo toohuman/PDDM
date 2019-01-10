@@ -6,8 +6,7 @@ def ignorant_pref_generator(states):
     # Set the preferences to all unknowns (0).
     preferences =  np.zeros((states, states), int)
     # Set the diagonals to false (-1).
-    for x in range(states):
-        preferences[x][x] = -1
+    np.fill_diagonal(preferences, -1)
 
     return preferences
 
