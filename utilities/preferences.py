@@ -11,26 +11,7 @@ def ignorant_pref_generator(states):
 
     return preferences
 
-# /**
-#  * Generate the error function for calculating probabilities of
-#  * confusing one option for an alternative, depending on their
-#  * relative placement to one another.
-#  */
-# auto comparisonError(const double x, const double lambda)
-# {
-#     import std.math : E;
-#     import std.math : pow;
 
-#     // Bound the error function in [0, bound]
-#     immutable auto bound = 0.5;
-
-#     if (lambda == 0) return bound * (1 - x);
-
-#     immutable double errorValue = ( pow(E, -lambda * x) - pow(E, -lambda) )
-#                                 / ( 1.0 - pow(E, -lambda) );
-
-#     return bound * errorValue;
-# }
 def comparison_error(x: float, param: float):
     """
     Generate the error function for calculating probabilities of confusing
@@ -46,7 +27,7 @@ def comparison_error(x: float, param: float):
         return (bound * (1 - x))
 
     error_value = ( pow(math.e, -param * x) - pow(math.e, -param) )\
-                  / ( 1.0 - pow(math.e, -param) )
+                / ( 1.0 - pow(math.e, -param) )
 
     return bound * error_value
 
