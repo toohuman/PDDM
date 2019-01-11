@@ -37,6 +37,8 @@ class Agent:
 
 
     def steady_state(self):
+        """ Check if agent has reached a steady state. """
+
         return True if self.since_change >= 100 else False
 
 
@@ -47,7 +49,7 @@ class Agent:
         Increment the evidence counter.
         """
 
-        # Track the number of iterations
+        # Track the number of iterations.
         if np.array_equal(preferences, self.preferences):
             self.no_change = True
         else:
@@ -64,7 +66,7 @@ class Agent:
         Increment the interaction counter.
         """
 
-        # Track the number of iterations
+        # Track the number of iterations.
         if np.array_equal(preferences, self.preferences):
             self.no_change = True
         else:

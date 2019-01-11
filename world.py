@@ -18,7 +18,9 @@ demo_mode = True
 
 evidence_rate = 1/100
 
-# Set the initialisation function for agent preferences: [uniform, other]
+noise_values = [-10.0, -5.0, -1.0, -0.1, 0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
+
+# Set the initialisation function for agent preferences: [uniform, other].
 init_preferences = preferences.ignorant_pref_generator
 
 def setup(num_of_agents, states, agents: [], random_instance):
@@ -38,10 +40,10 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
     """
 
     # For each agent, generate a random piece of evidence and have the agent perform
-    # evidential updating
+    # evidential updating.
     reached_convergence = True
     for agent in agents:
-        # Currently, just testing with random evidence
+        # Currently, just testing with random evidence.
         evidence = preferences.random_evidence(states, random_instance)
 
         # print(agent.preferences)
@@ -49,25 +51,21 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
         if random_instance.random() <= evidence_rate:
             agent.evidential_updating(operators.combine(agent.preferences, evidence))
 
-        # print(agent.preferences)
-
+        # Agents then update internal state, performing transitive closure and other
+        # statistics-based functions.
         agent.update()
-
-        # print(agent.preferences)
-
-        # print("-----------------------")
 
         reached_convergence &= agent.steady_state()
 
     if reached_convergence:
         return True
+    # If evidence_only mode is TRUE, skip preference merging.
     elif evidence_only:
         return False
 
     #################################
     # Agents then combine at random #
     #################################
-
     # Symmetric
     if mode == "symmetric":
         agent1 = agents[random.randint(0,len(agents) - 1)]
@@ -77,7 +75,7 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
 
         new_preference = operators.combine(agent1.preferences, agent2.preferences)
         # print(new_preference)
-        # Symmetric, so both agents adopt the combination preference
+        # Symmetric, so both agents adopt the combination preference.
         agent1.update_preferences(new_preference)
         agent2.update_preferences(new_preference)
 
