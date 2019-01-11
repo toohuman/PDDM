@@ -13,6 +13,7 @@ tests = 100
 max_iterations = 10000
 
 mode = "symmetric" # ["symmetric" | "asymmetric"]
+evidence_only = False
 demo_mode = True
 
 evidence_rate = 1/100
@@ -60,6 +61,8 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
 
     if reached_convergence:
         return True
+    elif evidence_only:
+        return False
 
     #################################
     # Agents then combine at random #
