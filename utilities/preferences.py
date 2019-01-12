@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import random
 
 def ignorant_pref_generator(states):
     """ Create a matrix of n x n zeros: a uniform, "unknown" preference. """
@@ -32,7 +33,7 @@ def comparison_error(x: float, param: float):
     return bound * error_value
 
 
-def random_evidence(states, random_instance):
+def random_evidence(states, noise_value, random_instance):
     """ Generate a random piece of evidence. """
 
     evidence = np.zeros((states, states), int)
@@ -41,11 +42,17 @@ def random_evidence(states, random_instance):
     while index_j == index_i:
         index_j = random_instance.randint(0, states - 1)
 
-    if index_i < index_j:
-        evidence[index_i][index_j] = -1
-        evidence[index_j][index_i] = 1
+    difference = abs(index_i - index_j) / states
+
+    best_index = index_i if index_i > index_j else index_j
+    worst_index = index_i if index_i < index_j else index_j
+
+    if noise_value is None or \
+        random_instance.random() > comparison_error(difference, noise_value):
+        evidence[best_index][worst_index] = 1
+        evidence[worst_index][best_index] = -1
     else:
-        evidence[index_i][index_j] = 1
-        evidence[index_j][index_i] = -1
+        evidence[best_index][worst_index] = -1
+        evidence[worst_index][best_index] = 1
 
     return evidence

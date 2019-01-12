@@ -19,6 +19,10 @@ demo_mode = True
 evidence_rate = 1/100
 
 noise_values = [-10.0, -5.0, -1.0, -0.1, 0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
+noise_value = 0.0   # None
+
+comparison_errors = []
+
 
 # Set the initialisation function for agent preferences: [uniform, other].
 init_preferences = preferences.ignorant_pref_generator
@@ -44,7 +48,7 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
     reached_convergence = True
     for agent in agents:
         # Currently, just testing with random evidence.
-        evidence = preferences.random_evidence(states, random_instance)
+        evidence = preferences.random_evidence(states, noise_value, random_instance)
 
         # print(agent.preferences)
 
@@ -59,13 +63,11 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
 
     if reached_convergence:
         return True
-    # If evidence_only mode is TRUE, skip preference merging.
     elif evidence_only:
         return False
 
-    #################################
-    # Agents then combine at random #
-    #################################
+    # Agents then combine at random
+
     # Symmetric
     if mode == "symmetric":
         agent1 = agents[random.randint(0,len(agents) - 1)]
@@ -116,6 +118,10 @@ def main():
             if main_loop(agents, arguments.states, mode, random_instance):
                 print(test, ":", iteration)
                 break
+
+        # for agent in agents:
+        #     print(agent.preferences)
+        # print(test)
 
     # Recording of results.
     # if demo_mode:
