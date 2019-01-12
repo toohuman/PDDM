@@ -23,7 +23,6 @@ noise_value = 0.0   # None
 
 comparison_errors = []
 
-
 # Set the initialisation function for agent preferences: [uniform, other].
 init_preferences = preferences.ignorant_pref_generator
 
@@ -48,7 +47,12 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
     reached_convergence = True
     for agent in agents:
         # Currently, just testing with random evidence.
-        evidence = preferences.random_evidence(states, noise_value, random_instance)
+        evidence = preferences.random_evidence(
+            states,
+            noise_value,
+            comparison_errors,
+            random_instance
+        )
 
         # print(agent.preferences)
 
@@ -96,6 +100,16 @@ def main():
     parser.add_argument("states", type=int)
     parser.add_argument("-r", "--random", type=bool, help="Random seeding of the RNG.")
     arguments = parser.parse_args()
+
+    global comparison_errors
+    global noise_value
+
+    if noise_value is not None:
+        for state in range(1, arguments.states):
+            comparison_errors.append(preferences.comparison_error(
+                state / arguments.states,
+                noise_value
+            ))
 
     random_instance = random.Random()
     # This needs to be fixed using GETSTATE and SETSTATE

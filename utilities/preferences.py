@@ -25,15 +25,15 @@ def comparison_error(x: float, param: float):
 
     # Special case:
     if param == 0.0:
-        return (bound * (1 - x))
+        return round(bound * (1 - x), 5)
 
     error_value = ( pow(math.e, -param * x) - pow(math.e, -param) )\
                 / ( 1.0 - pow(math.e, -param) )
 
-    return bound * error_value
+    return round(bound * error_value, 5)
 
 
-def random_evidence(states, noise_value, random_instance):
+def random_evidence(states, noise_value, comparison_errors, random_instance):
     """ Generate a random piece of evidence. """
 
     evidence = np.zeros((states, states), int)
@@ -42,13 +42,15 @@ def random_evidence(states, noise_value, random_instance):
     while index_j == index_i:
         index_j = random_instance.randint(0, states - 1)
 
-    difference = abs(index_i - index_j) / states
+    difference = abs(index_i - index_j) - 1
+    if noise_value is not None:
+        comp_error = comparison_errors[difference]
 
     best_index = index_i if index_i > index_j else index_j
     worst_index = index_i if index_i < index_j else index_j
 
     if noise_value is None or \
-        random_instance.random() > comparison_error(difference, noise_value):
+        random_instance.random() > comp_error:
         evidence[best_index][worst_index] = 1
         evidence[worst_index][best_index] = -1
     else:
