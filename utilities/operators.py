@@ -47,4 +47,5 @@ def transitive_closure(matrix):
 # Identify and remove cycles in the graph
 def destroy_cycles(matrix):
     """
+    This function may not be necessary...
     """

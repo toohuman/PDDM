@@ -19,7 +19,7 @@ demo_mode = True
 evidence_rate = 1/100
 
 noise_values = [-10.0, -5.0, -1.0, -0.1, 0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
-noise_value = 0.0   # None
+noise_value = None   # None
 
 comparison_errors = []
 
@@ -92,6 +92,13 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
 
 
 def main():
+    """
+    Main function for simulation experiments. Allows us to initiate start-up
+    separately from main loop, and to extract results from the main loop at
+    request. For example, the main_loop() will return TRUE when agents have
+    fully converged according to no. of iterations unchanged. Alternatively,
+    data can be processed for each iteration, or each test.
+    """
 
     # Parse the arguments of the program, e.g., agents, states, random init.
     parser = argparse.ArgumentParser(description="Preference-based distributed\
@@ -116,7 +123,7 @@ def main():
     random_instance.seed(128) if arguments.random == None else random_instance.seed()
 
     # Set up the collecting of results
-
+    preference_results = []
 
     # Repeat the setup and loop for the number of simulation runs required
     for test in range(tests):
@@ -127,12 +134,15 @@ def main():
         # Initial setup of agents and environment.
         setup(arguments.agents, arguments.states, agents, random_instance)
 
+        # Pre-loop results
+
         # Main loop of the experiments.
         for iteration in range(max_iterations):
             if main_loop(agents, arguments.states, mode, random_instance):
                 print(test, ":", iteration)
                 break
 
+        # Post-loop results
         # for agent in agents:
         #     print(agent.preferences)
         # print(test)
