@@ -5,9 +5,9 @@ from utilities import operators
 class Agent:
 
     preferences     = None
+    ordered_prefs   = []
     evidence        = int
     interactions    = int
-    no_change       = bool
     since_change    = int
 
     def __init__(self, preferences):
@@ -20,20 +20,10 @@ class Agent:
 
     def update(self):
         """
-        Agent update method to be called once every iteration, after evidential
-        updating and/or belief merging takes place, if they occur.
-        This way, the agent always tracks "no. of iterations since change" as opposed
-        to just "interactions" (evidence/consensus).
+        Agent update method to be called after every belief update.
         """
 
-        if self.no_change:
-            self.since_change += 1
-        else:
-            # CHECK THIS PART - IF CHANGE ONCE, THEN RESET THE COUNTER, BUT
-            # NEXT UPDATE(), KEEP COUNTING
-            self.no_change = True
-            self.since_change = 0
-            operators.transitive_closure(self.preferences)
+        operators.transitive_closure(self.preferences)
 
 
     def steady_state(self):
@@ -51,9 +41,9 @@ class Agent:
 
         # Track the number of iterations.
         if np.array_equal(preferences, self.preferences):
-            self.no_change = True
+            self.since_change += 1
         else:
-            self.no_change = False
+            self.since_change = 0
 
         self.preferences = preferences
         self.evidence += 1
@@ -68,9 +58,9 @@ class Agent:
 
         # Track the number of iterations.
         if np.array_equal(preferences, self.preferences):
-            self.no_change = True
+            self.since_change += 1
         else:
-            self.no_change = False
+            self.since_change = 0
 
         self.preferences = preferences
         self.interactions += 1

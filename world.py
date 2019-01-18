@@ -135,6 +135,8 @@ def main():
         setup(arguments.agents, arguments.states, agents, random_instance)
 
         # Pre-loop results
+        for agent in agents:
+
 
         # Main loop of the experiments.
         for iteration in range(max_iterations):
