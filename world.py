@@ -59,10 +59,6 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
         if random_instance.random() <= evidence_rate:
             agent.evidential_updating(operators.combine(agent.preferences, evidence))
 
-        # Agents then update internal state, performing transitive closure and other
-        # statistics-based functions.
-        agent.update()
-
         reached_convergence &= agent.steady_state()
 
     if reached_convergence:
