@@ -48,6 +48,8 @@ class Agent:
         self.preferences = preferences
         self.evidence += 1
 
+        self.update()
+
 
     def update_preferences(self, preferences):
         """
@@ -65,3 +67,4 @@ class Agent:
         self.preferences = preferences
         self.interactions += 1
 
+        self.update()
