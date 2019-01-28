@@ -9,7 +9,7 @@ from agents.agent import Agent
 from utilities import operators
 from utilities import preferences
 
-tests = 100
+tests = 3
 max_iterations = 10000
 
 mode = "symmetric" # ["symmetric" | "asymmetric"]
@@ -19,7 +19,7 @@ demo_mode = True
 evidence_rate = 10/100
 
 noise_values = [-10.0, -5.0, -1.0, -0.1, 0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
-noise_value = -10.0   # None
+noise_value = None   # None
 
 comparison_errors = []
 
@@ -62,9 +62,9 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
         reached_convergence &= agent.steady_state()
 
     if reached_convergence:
-        return True
-    elif evidence_only:
         return False
+    elif evidence_only:
+        return True
 
     # Agents then combine at random
 
@@ -84,7 +84,7 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
     # Asymmetric
     # if mode == "asymmetric":
 
-    return False
+    return True
 
 
 def main():
@@ -128,6 +128,7 @@ def main():
 
     # Repeat the setup and loop for the number of simulation runs required
     for test in range(tests):
+        print("Test #" + str(test), end="\r")
         agents = list()
         # Create an instance of a RNG that is either seeded for consistency of simulation
         # results, or create using a random seed for further testing.
@@ -135,24 +136,28 @@ def main():
         # Initial setup of agents and environment.
         setup(arguments.agents, arguments.states, agents, random_instance)
 
-        # Pre-loop results
-        # for agent in agents:
-            # print(agent.identify_preference())
+        # Pre-loop results based on agent initialisation.
+        for agent in agents:
+            prefs = agent.identify_preference()
+            for pref in prefs:
+                preference_results[0][test][pref] += 1.0 / len(prefs)
 
         # Main loop of the experiments.
         for iteration in range(max_iterations):
             if main_loop(agents, arguments.states, mode, random_instance):
-                print(test, ":", iteration)
+                for agent in agents:
+                    prefs = agent.identify_preference()
+                    for pref in prefs:
+                        preference_results[iteration + 1][test][pref] += 1.0 / len(prefs)
+            # If the simulation has converged, end the test.
+            else:
+                print("Converged: ", iteration)
                 break
 
-        # Post-loop results
-        for agent in agents:
-            prefs = agent.identify_preference()
-            for pref in prefs:
-                preference_results[-1][test][pref] += 1.0 / len(prefs)
-        preference_results /= len(agents)
+    # Post-loop results processing (normalisation).
+    preference_results /= len(agents)
 
-        print(preference_results[:])
+    print(preference_results)
 
     # Recording of results.
     # if demo_mode:
