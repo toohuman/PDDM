@@ -68,3 +68,20 @@ class Agent:
         self.interactions += 1
 
         self.update()
+
+
+    def identify_preference(self):
+        """
+        """
+
+        max_pref = 0
+        preference = []
+        for i, row in enumerate(self.preferences):
+            count = np.count_nonzero(row == 1)
+            if count > max_pref:
+                max_pref = count
+                preference = [i]
+            elif count == max_pref:
+                preference.append(i)
+
+        return sorted(preference)

@@ -16,10 +16,10 @@ mode = "symmetric" # ["symmetric" | "asymmetric"]
 evidence_only = False
 demo_mode = True
 
-evidence_rate = 1/100
+evidence_rate = 10/100
 
 noise_values = [-10.0, -5.0, -1.0, -0.1, 0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
-noise_value = None   # None
+noise_value = -10.0   # None
 
 comparison_errors = []
 
@@ -119,7 +119,12 @@ def main():
     random_instance.seed(128) if arguments.random == None else random_instance.seed()
 
     # Set up the collecting of results
-    preference_results = []
+    preference_results = [
+        [
+            [0.0 for x in range(arguments.states)] for y in range(tests)
+        ] for z in range(max_iterations + 1)
+    ]
+    preference_results = np.array(preference_results)
 
     # Repeat the setup and loop for the number of simulation runs required
     for test in range(tests):
@@ -131,8 +136,8 @@ def main():
         setup(arguments.agents, arguments.states, agents, random_instance)
 
         # Pre-loop results
-        for agent in agents:
-
+        # for agent in agents:
+            # print(agent.identify_preference())
 
         # Main loop of the experiments.
         for iteration in range(max_iterations):
@@ -141,9 +146,13 @@ def main():
                 break
 
         # Post-loop results
-        # for agent in agents:
-        #     print(agent.preferences)
-        # print(test)
+        for agent in agents:
+            prefs = agent.identify_preference()
+            for pref in prefs:
+                preference_results[-1][test][pref] += 1.0 / len(prefs)
+        preference_results /= len(agents)
+
+        print(preference_results[:])
 
     # Recording of results.
     # if demo_mode:
