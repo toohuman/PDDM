@@ -142,16 +142,26 @@ def main():
             for pref in prefs:
                 preference_results[0][test][pref] += 1.0 / len(prefs)
 
-        # Main loop of the experiments.
-        for iteration in range(max_iterations):
+        # Main loop of the experiments. Starts at 1 because we have recorded the agents'
+        # initial state above, at the "0th" index.
+        for iteration in range(1, max_iterations + 1):
             if main_loop(agents, arguments.states, mode, random_instance):
                 for agent in agents:
                     prefs = agent.identify_preference()
                     for pref in prefs:
-                        preference_results[iteration + 1][test][pref] += 1.0 / len(prefs)
+                        preference_results[iteration][test][pref] += 1.0 / len(prefs)
             # If the simulation has converged, end the test.
             else:
                 print("Converged: ", iteration)
+                for agent in agents:
+                    prefs = agent.identify_preference()
+                    for pref in prefs:
+                        preference_results[iteration][test][pref] += 1.0 / len(prefs)
+                print(iteration)
+                for iter in range(iteration + 1, max_iterations + 1):
+                    if iter == iteration + 1:
+                        print(iter, max_iterations)
+                    preference_results[iter][test] = np.copy(preference_results[iteration][test])
                 break
 
     # Post-loop results processing (normalisation).
