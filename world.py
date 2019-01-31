@@ -8,9 +8,10 @@ import numpy as np
 from agents.agent import Agent
 from utilities import operators
 from utilities import preferences
+from utilities import results
 
-tests = 3
-max_iterations = 10000
+tests = 100
+iteration_limit = 10000
 
 mode = "symmetric" # ["symmetric" | "asymmetric"]
 evidence_only = False
@@ -25,6 +26,10 @@ comparison_errors = []
 
 # Set the initialisation function for agent preferences: [uniform, other].
 init_preferences = preferences.ignorant_pref_generator
+
+# Output variables
+directory = "../results/test_results/pddm/"
+file_name_params = []
 
 def setup(num_of_agents, states, agents: [], random_instance):
     """
@@ -122,11 +127,12 @@ def main():
     preference_results = [
         [
             [0.0 for x in range(arguments.states)] for y in range(tests)
-        ] for z in range(max_iterations + 1)
+        ] for z in range(iteration_limit + 1)
     ]
     preference_results = np.array(preference_results)
 
     # Repeat the setup and loop for the number of simulation runs required
+    max_iteration = 0
     for test in range(tests):
         print("Test #" + str(test), end="\r")
         agents = list()
@@ -144,7 +150,7 @@ def main():
 
         # Main loop of the experiments. Starts at 1 because we have recorded the agents'
         # initial state above, at the "0th" index.
-        for iteration in range(1, max_iterations + 1):
+        for iteration in range(1, iteration_limit + 1):
             if main_loop(agents, arguments.states, mode, random_instance):
                 for agent in agents:
                     prefs = agent.identify_preference()
@@ -153,23 +159,40 @@ def main():
             # If the simulation has converged, end the test.
             else:
                 print("Converged: ", iteration)
+                max_iteration = iteration if iteration > max_iteration else max_iteration
                 for agent in agents:
                     prefs = agent.identify_preference()
                     for pref in prefs:
                         preference_results[iteration][test][pref] += 1.0 / len(prefs)
-                print(iteration)
-                for iter in range(iteration + 1, max_iterations + 1):
-                    if iter == iteration + 1:
-                        print(iter, max_iterations)
+                # print(iteration)
+                for iter in range(iteration + 1, iteration_limit + 1):
+                    # if iter == iteration + 1:
+                        # print(iter, iteration_limit)
                     preference_results[iter][test] = np.copy(preference_results[iteration][test])
                 break
 
     # Post-loop results processing (normalisation).
     preference_results /= len(agents)
 
-    print(preference_results)
-
     # Recording of results.
+    # First, add parameters in sequence.
+    global directory
+    global file_name_params
+    directory += "{0}/{1}/".format(arguments.agents, arguments.states)
+    file_name_params.append("{:.3f}".format(evidence_rate))
+    file_name_params.append("er")
+    if noise_value is not None:
+        file_name_params.append("{:.3f}".format(noise_value))
+        file_name_params.append("nv")
+    # Then write the results given the parameters.
+    results.write_to_file(
+        directory,
+        "preferences",
+        file_name_params,
+        preference_results,
+        max_iteration
+    )
+
     # if demo_mode:
         # Output plots while running simulations, but do not record the results.
     # else:
