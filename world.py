@@ -151,6 +151,7 @@ def main():
         # Main loop of the experiments. Starts at 1 because we have recorded the agents'
         # initial state above, at the "0th" index.
         for iteration in range(1, iteration_limit + 1):
+            # While not converged, continue to run the main loop.
             if main_loop(agents, arguments.states, mode, random_instance):
                 for agent in agents:
                     prefs = agent.identify_preference()
@@ -169,6 +170,7 @@ def main():
                     # if iter == iteration + 1:
                         # print(iter, iteration_limit)
                     preference_results[iter][test] = np.copy(preference_results[iteration][test])
+                # Simulation has converged, so break main loop.
                 break
 
     # Post-loop results processing (normalisation).
