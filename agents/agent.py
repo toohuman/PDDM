@@ -26,10 +26,10 @@ class Agent:
         operators.transitive_closure(self.preferences)
 
 
-    def steady_state(self):
+    def steady_state(self, threshold):
         """ Check if agent has reached a steady state. """
 
-        return True if self.since_change >= 100 else False
+        return True if self.since_change >= threshold else False
 
 
 

@@ -12,6 +12,7 @@ from utilities import results
 
 tests = 100
 iteration_limit = 10000
+steady_state_threshold = 100
 
 mode = "symmetric" # ["symmetric" | "asymmetric"]
 evidence_only = False
@@ -64,7 +65,7 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
         if random_instance.random() <= evidence_rate:
             agent.evidential_updating(operators.combine(agent.preferences, evidence))
 
-        reached_convergence &= agent.steady_state()
+        reached_convergence &= agent.steady_state(steady_state_threshold)
 
     if reached_convergence:
         return False
@@ -96,8 +97,8 @@ def main():
     """
     Main function for simulation experiments. Allows us to initiate start-up
     separately from main loop, and to extract results from the main loop at
-    request. For example, the main_loop() will return TRUE when agents have
-    fully converged according to no. of iterations unchanged. Alternatively,
+    request. For example, the main_loop() will return FALSE when agents have
+    fully converged according to no. of interactions unchanged. Alternatively,
     data can be processed for each iteration, or each test.
     """
 
