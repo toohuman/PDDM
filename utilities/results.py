@@ -54,19 +54,23 @@ def quality(preferences, true_preferences, normalised = True):
     return loss(preferences, np.transpose(true_preferences), normalised)
 
 
-def write_to_file(directory, file_name, params, data, max):
+def write_to_file(directory, file_name, params, data, max, array_data = False):
     """
     """
 
     with open(directory + file_name + '_' + '_'.join(params) + '.csv', 'w') as file:
         for i, test_data in enumerate(data):
-            for j, preferences in enumerate(test_data):
-                file.write('[')
-                for k, preference in enumerate(preferences):
-                    file.write('{:.4f}'.format(preference))
-                    if k != len(preferences) - 1:
-                        file.write(',')
-                file.write(']')
+            for j, results_data in enumerate(test_data):
+                if array_data:
+                    file.write('[')
+                    for k, sub_data in enumerate(results_data):
+                        file.write('{:.4f}'.format(sub_data))
+                        if k != len(results_data) - 1:
+                            file.write(',')
+                    file.write(']')
+                else:
+                    file.write('{:.4f}'.format(results_data))
+                # Determine whether the line ends here
                 if j != len(test_data) - 1:
                     file.write(',')
                 else:

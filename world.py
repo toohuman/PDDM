@@ -219,7 +219,8 @@ def main():
         "preferences",
         file_name_params,
         preference_results,
-        max_iteration
+        max_iteration,
+        array_data = True
     )
     results.write_to_file(
         directory,
