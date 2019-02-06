@@ -148,6 +148,10 @@ def main():
         ] for z in range(iteration_limit + 1)
     ]
     preference_results = np.array(preference_results)
+    loss_results = [
+        [ 0.0 for y in range(tests) ] for z in range(iteration_limit + 1)
+    ]
+    loss_results = np.array(loss_results)
 
     # Repeat the setup and loop for the number of simulation runs required
     max_iteration = 0
@@ -165,6 +169,7 @@ def main():
             prefs = results.identify_preference(agent.preferences)
             for pref in prefs:
                 preference_results[0][test][pref] += 1.0 / len(prefs)
+            loss_results[0][test] += results.loss(agent.preferences, true_preferences)
 
         # Main loop of the experiments. Starts at 1 because we have recorded the agents'
         # initial state above, at the "0th" index.
@@ -175,6 +180,7 @@ def main():
                     prefs = results.identify_preference(agent.preferences)
                     for pref in prefs:
                         preference_results[iteration][test][pref] += 1.0 / len(prefs)
+                    loss_results[iteration][test] += results.loss(agent.preferences, true_preferences)
             # If the simulation has converged, end the test.
             else:
                 print("Converged: ", iteration)
@@ -183,20 +189,19 @@ def main():
                     prefs = results.identify_preference(agent.preferences)
                     for pref in prefs:
                         preference_results[iteration][test][pref] += 1.0 / len(prefs)
-                    print(results.quality(agent.preferences, true_preferences))
-                    print(results.quality(agent.preferences, true_preferences, False))
-                    print(results.loss(agent.preferences, true_preferences))
-                    print("------------")
+                    loss_results[iteration][test] += results.loss(agent.preferences, true_preferences)
                 # print(iteration)
                 for iter in range(iteration + 1, iteration_limit + 1):
                     # if iter == iteration + 1:
                         # print(iter, iteration_limit)
                     preference_results[iter][test] = np.copy(preference_results[iteration][test])
+                    loss_results[iter][test] = np.copy(loss_results[iteration][test])
                 # Simulation has converged, so break main loop.
                 break
 
     # Post-loop results processing (normalisation).
     preference_results /= len(agents)
+    loss_results /= len(agents)
 
     # Recording of results.
     # First, add parameters in sequence.
@@ -214,6 +219,13 @@ def main():
         "preferences",
         file_name_params,
         preference_results,
+        max_iteration
+    )
+    results.write_to_file(
+        directory,
+        "loss",
+        file_name_params,
+        loss_results,
         max_iteration
     )
 
