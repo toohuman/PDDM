@@ -20,11 +20,38 @@ def identify_preference(preferences):
     return sorted(preference)
 
 
-def similarity(preferences, true_order):
+def loss(preferences, true_preferences, normalised = True):
     """
+    Named after a loss function in machine learning, this function calculates
+    the sum of the differences of two matrices, scaled by 0.5 so that we count
+    half-values for having no preference between two elements.
+    The idea is that we compare the agent's preferences with the true state of
+    the world and a return value of 0 indicates no differences (100% similarity)
+    or "zero loss" between the true value and the agents' preferences.
+
+    The normalisation option uses the worst possible preference (in relation to
+    the true state of the world) to normalise the values in [0, 1].
     """
 
-    return
+    differences = np.subtract(preferences, true_preferences)
+    differences = np.absolute(differences)
+
+    if normalised:
+        normaliser = loss(true_preferences, np.transpose(true_preferences), False)
+        return np.sum(np.multiply(differences, 0.5)) / normaliser
+
+    return np.sum(np.multiply(differences, 0.5))
+
+
+def quality(preferences, true_preferences, normalised = True):
+    """
+    Defined as the loss function, but where we compare an agent's preferences
+    with the opposite of the true state of the world, so that we get a "quality
+    value" where the higher the score, the more accurate the agent's preferences.
+    This value can be normalised.
+    """
+
+    return loss(preferences, np.transpose(true_preferences), normalised)
 
 
 def write_to_file(directory, file_name, params, data, max):

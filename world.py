@@ -31,6 +31,7 @@ init_preferences = preferences.ignorant_pref_generator
 # True state of the world
 true_order = []
 true_preferences = []
+worst_preferences = []
 
 # Output variables
 directory = "../results/test_results/pddm/"
@@ -116,11 +117,15 @@ def main():
 
     global true_order
     global true_preferences
+    global worst_preferences
     true_order = [x for x in reversed(range(arguments.states))]
     true_preferences = preferences.ignorant_pref_generator(arguments.states)
+    worst_preferences = preferences.ignorant_pref_generator(arguments.states)
     for i in range(len(true_order) - 1):
         true_preferences[true_order[i]][true_order[i + 1]] = 1
+        worst_preferences[true_order[len(true_order) - 1 - i]][true_order[len(true_order) - 2 - i]] = 1
     operators.transitive_closure(true_preferences)
+    operators.transitive_closure(worst_preferences)
 
     global comparison_errors
     global noise_value
@@ -178,6 +183,10 @@ def main():
                     prefs = results.identify_preference(agent.preferences)
                     for pref in prefs:
                         preference_results[iteration][test][pref] += 1.0 / len(prefs)
+                    print(results.quality(agent.preferences, true_preferences))
+                    print(results.quality(agent.preferences, true_preferences, False))
+                    print(results.loss(agent.preferences, true_preferences))
+                    print("------------")
                 # print(iteration)
                 for iter in range(iteration + 1, iteration_limit + 1):
                     # if iter == iteration + 1:
