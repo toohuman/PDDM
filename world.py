@@ -18,24 +18,18 @@ mode = "symmetric" # ["symmetric" | "asymmetric"]
 evidence_only = False
 demo_mode = True
 
+evidence_rates = [x/1000 for x in range(10)]\
+               + [x/100 for x in range(1, 10)]\
+               + [x/10 for x in range(1, 11)]
 evidence_rate = 10/100
-
-noise_values = [-10.0, -5.0, -1.0, -0.1, 0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
+noise_values = [0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
 noise_value = None   # None
-
 comparison_errors = []
 
 # Set the initialisation function for agent preferences: [uniform, other].
 init_preferences = preferences.ignorant_pref_generator
 
-# True state of the world
-true_order = []
-true_preferences = []
-worst_preferences = []
 
-# Output variables
-directory = "../results/test_results/pddm/"
-file_name_params = []
 
 def setup(num_of_agents, states, agents: [], random_instance):
     """
@@ -94,6 +88,7 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
 
     # Asymmetric
     # if mode == "asymmetric":
+    #   ...
 
     return True
 
@@ -115,9 +110,15 @@ def main():
     parser.add_argument("-r", "--random", type=bool, help="Random seeding of the RNG.")
     arguments = parser.parse_args()
 
-    global true_order
-    global true_preferences
-    global worst_preferences
+    # True state of the world
+    true_order = []
+    true_preferences = []
+    worst_preferences = []
+
+    # Output variables
+    directory = "../results/test_results/pddm/"
+    file_name_params = []
+
     true_order = [x for x in reversed(range(arguments.states))]
     true_preferences = preferences.ignorant_pref_generator(arguments.states)
     worst_preferences = preferences.ignorant_pref_generator(arguments.states)
@@ -183,7 +184,7 @@ def main():
                     loss_results[iteration][test] += results.loss(agent.preferences, true_preferences)
             # If the simulation has converged, end the test.
             else:
-                print("Converged: ", iteration)
+                # print("Converged: ", iteration)
                 max_iteration = iteration if iteration > max_iteration else max_iteration
                 for agent in agents:
                     prefs = results.identify_preference(agent.preferences)
@@ -205,9 +206,9 @@ def main():
 
     # Recording of results.
     # First, add parameters in sequence.
-    global directory
-    global file_name_params
-    directory += "{0}/{1}/".format(arguments.agents, arguments.states)
+    # directory += "{0}/{1}/".format(arguments.agents, arguments.states)
+    file_name_params.append("{}_agents_".format(arguments.agents))
+    file_name_params.append("{}_states".format(arguments.states))
     file_name_params.append("{:.3f}".format(evidence_rate))
     file_name_params.append("er")
     if noise_value is not None:
@@ -235,10 +236,19 @@ def main():
     # else:
         # Record the results but skip the plotting.
 
-
     sys.exit(1)
 
 
 if __name__ == "__main__":
-    main()
+    # For standard runs and testing
+    # main()
 
+    for er in evidence_rates:
+        evidence_rate = er
+        print("Evidence rate: ", evidence_rate)
+        main()
+
+        # for nv in noise_values:
+        #     noise_value = nv
+        #     print("Noise value:", noise_value)
+        #     main()

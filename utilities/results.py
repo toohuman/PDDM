@@ -80,3 +80,4 @@ def write_to_file(directory, file_name, params, data, max, array_data = False):
                     file.write('\n')
             if i > max:
                 break
+
