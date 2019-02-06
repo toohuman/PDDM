@@ -56,6 +56,9 @@ def quality(preferences, true_preferences, normalised = True):
 
 def write_to_file(directory, file_name, params, data, max, array_data = False):
     """
+    Write the results arrays to a file. The array_data argument allows us to write
+    nested (array) data for recording the agents' averaged preferences for each state
+    while reusing the same function for writing single value averages, e.g., loss.
     """
 
     with open(directory + file_name + '_' + '_'.join(params) + '.csv', 'w') as file:
