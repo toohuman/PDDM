@@ -28,6 +28,10 @@ comparison_errors = []
 # Set the initialisation function for agent preferences: [uniform, other].
 init_preferences = preferences.ignorant_pref_generator
 
+# True state of the world
+true_order = []
+true_preferences = []
+
 # Output variables
 directory = "../results/test_results/pddm/"
 file_name_params = []
@@ -110,6 +114,14 @@ def main():
     parser.add_argument("-r", "--random", type=bool, help="Random seeding of the RNG.")
     arguments = parser.parse_args()
 
+    global true_order
+    global true_preferences
+    true_order = [x for x in reversed(range(arguments.states))]
+    true_preferences = preferences.ignorant_pref_generator(arguments.states)
+    for i in range(len(true_order) - 1):
+        true_preferences[true_order[i]][true_order[i + 1]] = 1
+    operators.transitive_closure(true_preferences)
+
     global comparison_errors
     global noise_value
 
@@ -145,7 +157,7 @@ def main():
 
         # Pre-loop results based on agent initialisation.
         for agent in agents:
-            prefs = agent.identify_preference()
+            prefs = results.identify_preference(agent.preferences)
             for pref in prefs:
                 preference_results[0][test][pref] += 1.0 / len(prefs)
 
@@ -155,7 +167,7 @@ def main():
             # While not converged, continue to run the main loop.
             if main_loop(agents, arguments.states, mode, random_instance):
                 for agent in agents:
-                    prefs = agent.identify_preference()
+                    prefs = results.identify_preference(agent.preferences)
                     for pref in prefs:
                         preference_results[iteration][test][pref] += 1.0 / len(prefs)
             # If the simulation has converged, end the test.
@@ -163,7 +175,7 @@ def main():
                 print("Converged: ", iteration)
                 max_iteration = iteration if iteration > max_iteration else max_iteration
                 for agent in agents:
-                    prefs = agent.identify_preference()
+                    prefs = results.identify_preference(agent.preferences)
                     for pref in prefs:
                         preference_results[iteration][test][pref] += 1.0 / len(prefs)
                 # print(iteration)

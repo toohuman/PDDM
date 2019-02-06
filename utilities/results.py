@@ -1,3 +1,32 @@
+# This file contains the functions for calculating results from the agents'
+# preferences, as well as writing the results to a file.
+
+import numpy as np
+
+def identify_preference(preferences):
+    """
+    """
+
+    max_pref = 0
+    preference = []
+    for i, row in enumerate(preferences):
+        count = np.count_nonzero(row == 1)
+        if count > max_pref:
+            max_pref = count
+            preference = [i]
+        elif count == max_pref:
+            preference.append(i)
+
+    return sorted(preference)
+
+
+def similarity(preferences, true_order):
+    """
+    """
+
+    return
+
+
 def write_to_file(directory, file_name, params, data, max):
     """
     """
