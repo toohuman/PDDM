@@ -18,9 +18,7 @@ mode = "symmetric" # ["symmetric" | "asymmetric"]
 evidence_only = False
 demo_mode = True
 
-evidence_rates = [x/1000 for x in range(10)]\
-               + [x/100 for x in range(1, 10)]\
-               + [x/10 for x in range(1, 11)]
+evidence_rates = [0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0]
 evidence_rate = 10/100
 noise_values = [0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
 noise_value = None   # None
@@ -207,13 +205,11 @@ def main():
     # Recording of results.
     # First, add parameters in sequence.
     # directory += "{0}/{1}/".format(arguments.agents, arguments.states)
-    file_name_params.append("{}_agents_".format(arguments.agents))
+    file_name_params.append("{}_agents".format(arguments.agents))
     file_name_params.append("{}_states".format(arguments.states))
-    file_name_params.append("{:.3f}".format(evidence_rate))
-    file_name_params.append("er")
+    file_name_params.append("{:.3f}_er".format(evidence_rate))
     if noise_value is not None:
-        file_name_params.append("{:.3f}".format(noise_value))
-        file_name_params.append("nv")
+        file_name_params.append("{:.3f}_nv".format(noise_value))
     # Then write the results given the parameters.
     results.write_to_file(
         directory,
@@ -235,8 +231,6 @@ def main():
         # Output plots while running simulations, but do not record the results.
     # else:
         # Record the results but skip the plotting.
-
-    sys.exit(1)
 
 
 if __name__ == "__main__":
