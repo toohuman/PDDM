@@ -43,7 +43,7 @@ for i, states in enumerate(reversed(states_set)):
 
 print(heatmap_results)
 print(labels)
-cmap = sns.cubehelix_palette(8, start=2.5, rot=0.7, dark=0, light=.95, as_cmap=True, reverse=True)
+cmap = sns.cubehelix_palette(8, start=2.4, rot=0.68, dark=0.08, light=.96, hue=1.0, as_cmap=True, reverse=True)
 ax = sns.heatmap(
     heatmap_results,
     # center=0,
