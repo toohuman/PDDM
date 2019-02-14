@@ -43,11 +43,11 @@ for i, states in enumerate(reversed(states_set)):
 
 print(heatmap_results)
 print(labels)
-cmap = sns.cubehelix_palette(4, start=0.1, rot=0, dark=0, light=.95, as_cmap=True, reverse=True)
+cmap = sns.cubehelix_palette(8, start=2.5, rot=0.7, dark=0, light=.95, as_cmap=True, reverse=True)
 ax = sns.heatmap(
     heatmap_results,
     # center=0,
-    cmap="magma",
+    cmap=cmap,
     cbar_kws={"shrink": .75},
     xticklabels=agents_set,
     yticklabels=list(reversed(states_set)),
