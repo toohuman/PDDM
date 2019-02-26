@@ -18,16 +18,22 @@ mode = "symmetric" # ["symmetric" | "asymmetric"]
 evidence_only = False
 demo_mode = True
 
+# List of evidence rates
 evidence_rates = [0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0]
+# Set a single evidence rate to begin with, in case we don't test the whole list
+# and only want to experiment with a preset evidence rate.
 evidence_rate = 10/100
+# List of noise values
 noise_values = [0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
+# Default value: None - no noise is added to the simulation. This default is important
+# because noise values can be negative.
 noise_value = None   # None
+# Store the generated comparison error values so that we only need to generate them once.
 comparison_errors = []
 
-# Set the initialisation function for agent preferences: [uniform, other].
+# Set the initialisation function for agent preferences - option to add additional
+# initialisation functions later.
 init_preferences = preferences.ignorant_pref_generator
-
-
 
 def setup(num_of_agents, states, agents: [], random_instance):
     """
