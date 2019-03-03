@@ -44,9 +44,10 @@ for i, states in enumerate(reversed(states_set)):
 
 print(heatmap_results)
 print(labels)
-cmap = sns.cubehelix_palette(8, start=3.3, rot=0.33, dark=0, light=.96, hue=1.8, as_cmap=True)
+# cmap = sns.cubehelix_palette(8, start=3.3, rot=0.33, dark=0, light=.96, hue=1.8, as_cmap=True)
 # cmap = sns.cubehelix_palette(8, start=2.4, rot=0.68, dark=0.08, light=.96, hue=1, as_cmap=True)
 # cmap = cm.get_cmap('magma') #'Greys_r'
+cmap = sns.cm.rocket_r
 ax = sns.heatmap(
     heatmap_results,
     # center=0,

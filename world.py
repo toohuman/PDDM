@@ -186,6 +186,7 @@ def main():
                     for pref in prefs:
                         preference_results[iteration][test][pref] += 1.0 / len(prefs)
                     loss_results[iteration][test] += results.loss(agent.preferences, true_preferences)
+
             # If the simulation has converged, end the test.
             else:
                 # print("Converged: ", iteration)
@@ -241,12 +242,12 @@ def main():
 
 if __name__ == "__main__":
     # For standard runs and testing
-    # main()
+    main()
 
-    for er in evidence_rates:
-        evidence_rate = er
-        print("Evidence rate: ", evidence_rate)
-        main()
+    # for er in evidence_rates:
+    #     evidence_rate = er
+    #     print("Evidence rate: ", evidence_rate)
+    #     main()
 
         # for nv in noise_values:
         #     noise_value = nv
