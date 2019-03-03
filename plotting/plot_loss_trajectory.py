@@ -45,13 +45,17 @@ for i, states in enumerate(states_set):
 
 print(loss_results)
 print(labels)
-# cmap = cm.get_cmap('magma')
+cmap = sns.cm.rocket
+c = [cmap(x/len(states_set)) for x in range(0, len(states_set))]
 for j, agents in enumerate(agents_set):
     for i, states in enumerate(states_set):
         if loss_results[i][j][0] == 0:
             continue
-        ax = sns.lineplot(iterations, loss_results[i][j], linewidth = 2, palette=sns.cm.rocket)
-    ax.set(xlabel='Iterations', ylabel='Average Loss')
-    ax.set_title("{} agents".format(agents))
-    ax.legend(states_set)
-    plt.show()
+        ax = plt.plot(iterations, loss_results[i][j], linewidth = 2, color=c[i])
+    plt.xlabel("Iterations")
+    plt.ylabel("Average Loss")
+    plt.title("{} agents".format(agents))
+    plt.legend(states_set)
+    # plt.show()
+    plt.savefig("../../results/graphs/pddm/{}_agents_{}_er.png".format(agents, er))
+    plt.clf()
