@@ -22,7 +22,7 @@ demo_mode = True
 evidence_rates = [0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0]
 # Set a single evidence rate to begin with, in case we don't test the whole list
 # and only want to experiment with a preset evidence rate.
-evidence_rate = 10/100
+evidence_rate = 5/100
 # List of noise values
 noise_values = [0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
 # Default value: None - no noise is added to the simulation. This default is important
@@ -249,7 +249,7 @@ if __name__ == "__main__":
     #     print("Evidence rate: ", evidence_rate)
     #     main()
 
-        # for nv in noise_values:
-        #     noise_value = nv
-        #     print("Noise value:", noise_value)
-        #     main()
+    # for nv in noise_values:
+    #     noise_value = nv
+    #     print("Noise value:", noise_value)
+    #     main()

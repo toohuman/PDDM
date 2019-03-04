@@ -9,7 +9,7 @@ PERC_UPPER = 90
 states_set = [5, 10, 20, 30, 40, 50]
 agents_set = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 evidence_rates = [0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0]
-er = 0.01
+er = 0.05
 
 result_directory = "../../results/test_results/pddm/"
 
@@ -34,7 +34,6 @@ for i, states in enumerate(reversed(states_set)):
             steady_state_results = [float(x) for x in steady_state_results.strip().split(",")]
 
             average_loss = np.average(steady_state_results)
-            print(average_loss)
 
             heatmap_results[i][j] = average_loss
 
