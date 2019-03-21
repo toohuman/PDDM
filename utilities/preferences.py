@@ -1,17 +1,20 @@
 import math
-import numpy as np
 import random
 
+# def ignorant_pref_generator(states):
+#     """ Create a matrix of n x n zeros: a uniform, "unknown" preference. """
+
+#     # Set the preferences to all unknowns (0).
+#     preferences =  np.zeros((states, states), int)
+#     # Set the diagonals to false (-1).
+#     np.fill_diagonal(preferences, -1)
+
+#     return preferences
+
 def ignorant_pref_generator(states):
-    """ Create a matrix of n x n zeros: a uniform, "unknown" preference. """
+    """ Returns an empty set of preferences to denote complete uncertainty. """
 
-    # Set the preferences to all unknowns (0).
-    preferences =  np.zeros((states, states), int)
-    # Set the diagonals to false (-1).
-    np.fill_diagonal(preferences, -1)
-
-    return preferences
-
+    return set()
 
 def comparison_error(x: float, param: float):
     """
@@ -33,10 +36,35 @@ def comparison_error(x: float, param: float):
     return round(bound * error_value, 5)
 
 
+# def random_evidence(states, noise_value, comparison_errors, random_instance):
+#     """ Generate a random piece of evidence. """
+
+#     evidence = np.zeros((states, states), int)
+#     index_i = random_instance.randint(0, states - 1)
+#     index_j = index_i
+#     while index_j == index_i:
+#         index_j = random_instance.randint(0, states - 1)
+
+#     difference = abs(index_i - index_j) - 1
+#     if noise_value is not None:
+#         comp_error = comparison_errors[difference]
+
+#     best_index = index_i if index_i > index_j else index_j
+#     worst_index = index_i if index_i < index_j else index_j
+
+#     if noise_value is None or random_instance.random() > comp_error:
+#         evidence[best_index][worst_index] = 1
+#         evidence[worst_index][best_index] = -1
+#     else:
+#         evidence[best_index][worst_index] = -1
+#         evidence[worst_index][best_index] = 1
+
+#     return evidence
+
 def random_evidence(states, noise_value, comparison_errors, random_instance):
     """ Generate a random piece of evidence. """
 
-    evidence = np.zeros((states, states), int)
+    evidence = set()
     index_i = random_instance.randint(0, states - 1)
     index_j = index_i
     while index_j == index_i:
@@ -49,12 +77,16 @@ def random_evidence(states, noise_value, comparison_errors, random_instance):
     best_index = index_i if index_i > index_j else index_j
     worst_index = index_i if index_i < index_j else index_j
 
-    if noise_value is None or \
-        random_instance.random() > comp_error:
-        evidence[best_index][worst_index] = 1
-        evidence[worst_index][best_index] = -1
+    # if noise_value is None or random_instance.random() > comp_error:
+    #     evidence[best_index][worst_index] = 1
+    #     evidence[worst_index][best_index] = -1
+    # else:
+    #     evidence[best_index][worst_index] = -1
+    #     evidence[worst_index][best_index] = 1
+
+    if noise_value is None or random_instance.random() > comp_error:
+        evidence.add((best_index, worst_index))
     else:
-        evidence[best_index][worst_index] = -1
-        evidence[worst_index][best_index] = 1
+        evidence.add((worst_index, best_index))
 
     return evidence

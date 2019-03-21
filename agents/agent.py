@@ -1,11 +1,8 @@
-import numpy as np
-
 from utilities import operators
 
 class Agent:
 
     preferences     = None
-    ordered_prefs   = []
     evidence        = int
     interactions    = int
     since_change    = int
@@ -13,17 +10,9 @@ class Agent:
     def __init__(self, preferences):
 
         self.preferences = preferences
-        self.interactions = 0
         self.evidence = 0
-        self.no_change = True
+        self.interactions = 0
         self.since_change = 0
-
-    def update(self):
-        """
-        Agent update method to be called after every belief update.
-        """
-
-        operators.transitive_closure(self.preferences)
 
 
     def steady_state(self, threshold):
@@ -32,23 +21,24 @@ class Agent:
         return True if self.since_change >= threshold else False
 
 
-
     def evidential_updating(self, preferences):
         """
         Update the agent's preferences based on the evidence they received.
         Increment the evidence counter.
         """
 
+        # Form the transitive closure of the combined preference
+        # prior to updating.
+        operators.transitive_closure(preferences)
+
         # Track the number of iterations.
-        if np.array_equal(preferences, self.preferences):
+        if preferences == self.preferences:
             self.since_change += 1
         else:
             self.since_change = 0
 
         self.preferences = preferences
         self.evidence += 1
-
-        self.update()
 
 
     def update_preferences(self, preferences):
@@ -58,14 +48,16 @@ class Agent:
         Increment the interaction counter.
         """
 
+        # Form the transitive closure of the combined preference
+        # prior to updating.
+        operators.transitive_closure(preferences)
+
         # Track the number of iterations.
-        if np.array_equal(preferences, self.preferences):
+        if preferences == self.preferences:
             self.since_change += 1
         else:
             self.since_change = 0
 
         self.preferences = preferences
         self.interactions += 1
-
-        self.update()
 

@@ -19,7 +19,8 @@ evidence_only = False
 demo_mode = True
 
 # List of evidence rates
-evidence_rates = [0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0]
+# evidence_rates = [0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0]
+evidence_rates = [0.0, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0]
 # Set a single evidence rate to begin with, in case we don't test the whole list
 # and only want to experiment with a preset evidence rate.
 evidence_rate = 5/100
@@ -62,8 +63,6 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
             comparison_errors,
             random_instance
         )
-
-        # print(agent.preferences)
 
         if random_instance.random() <= evidence_rate:
             agent.evidential_updating(operators.combine(agent.preferences, evidence))
@@ -116,21 +115,21 @@ def main():
 
     # True state of the world
     true_order = []
-    true_preferences = []
-    worst_preferences = []
+    true_prefs = []
+    opposite_prefs = []
 
     # Output variables
     directory = "../results/test_results/pddm/"
     file_name_params = []
 
     true_order = [x for x in reversed(range(arguments.states))]
-    true_preferences = preferences.ignorant_pref_generator(arguments.states)
-    worst_preferences = preferences.ignorant_pref_generator(arguments.states)
+    true_prefs = preferences.ignorant_pref_generator(arguments.states)
+    opposite_prefs = preferences.ignorant_pref_generator(arguments.states)
     for i in range(len(true_order) - 1):
-        true_preferences[true_order[i]][true_order[i + 1]] = 1
-        worst_preferences[true_order[len(true_order) - 1 - i]][true_order[len(true_order) - 2 - i]] = 1
-    operators.transitive_closure(true_preferences)
-    operators.transitive_closure(worst_preferences)
+        true_prefs.add((true_order[i], true_order[i + 1]))
+        opposite_prefs.add((true_order[i + 1],true_order[i]))
+    true_prefs = operators.transitive_closure(true_prefs)
+    opposite_prefs = operators.transitive_closure(opposite_prefs)
 
     global comparison_errors
     global noise_value
@@ -147,12 +146,12 @@ def main():
     random_instance.seed(128) if arguments.random == None else random_instance.seed()
 
     # Set up the collecting of results
-    preference_results = [
-        [
-            [0.0 for x in range(arguments.states)] for y in range(tests)
-        ] for z in range(iteration_limit + 1)
-    ]
-    preference_results = np.array(preference_results)
+    # preference_results = [
+    #     [
+    #         [0.0 for x in range(arguments.states)] for y in range(tests)
+    #     ] for z in range(iteration_limit + 1)
+    # ]
+    # preference_results = np.array(preference_results)
     loss_results = [
         [ 0.0 for y in range(tests) ] for z in range(iteration_limit + 1)
     ]
@@ -171,10 +170,10 @@ def main():
 
         # Pre-loop results based on agent initialisation.
         for agent in agents:
-            prefs = results.identify_preference(agent.preferences)
-            for pref in prefs:
-                preference_results[0][test][pref] += 1.0 / len(prefs)
-            loss_results[0][test] += results.loss(agent.preferences, true_preferences)
+            # prefs = results.identify_preference(agent.preferences)
+            # for pref in prefs:
+            #     preference_results[0][test][pref] += 1.0 / len(prefs)
+            loss_results[0][test] += results.loss(agent.preferences, true_prefs)
 
         # Main loop of the experiments. Starts at 1 because we have recorded the agents'
         # initial state above, at the "0th" index.
@@ -182,31 +181,31 @@ def main():
             # While not converged, continue to run the main loop.
             if main_loop(agents, arguments.states, mode, random_instance):
                 for agent in agents:
-                    prefs = results.identify_preference(agent.preferences)
-                    for pref in prefs:
-                        preference_results[iteration][test][pref] += 1.0 / len(prefs)
-                    loss_results[iteration][test] += results.loss(agent.preferences, true_preferences)
+                    # prefs = results.identify_preference(agent.preferences)
+                    # for pref in prefs:
+                    #     preference_results[iteration][test][pref] += 1.0 / len(prefs)
+                    loss_results[iteration][test] += results.loss(agent.preferences, true_prefs)
 
             # If the simulation has converged, end the test.
             else:
                 # print("Converged: ", iteration)
                 max_iteration = iteration if iteration > max_iteration else max_iteration
                 for agent in agents:
-                    prefs = results.identify_preference(agent.preferences)
-                    for pref in prefs:
-                        preference_results[iteration][test][pref] += 1.0 / len(prefs)
-                    loss_results[iteration][test] += results.loss(agent.preferences, true_preferences)
+                    # prefs = results.identify_preference(agent.preferences)
+                    # for pref in prefs:
+                    #     preference_results[iteration][test][pref] += 1.0 / len(prefs)
+                    loss_results[iteration][test] += results.loss(agent.preferences, true_prefs)
                 # print(iteration)
                 for iter in range(iteration + 1, iteration_limit + 1):
                     # if iter == iteration + 1:
                         # print(iter, iteration_limit)
-                    preference_results[iter][test] = np.copy(preference_results[iteration][test])
+                    # preference_results[iter][test] = np.copy(preference_results[iteration][test])
                     loss_results[iter][test] = np.copy(loss_results[iteration][test])
                 # Simulation has converged, so break main loop.
                 break
 
     # Post-loop results processing (normalisation).
-    preference_results /= len(agents)
+    # preference_results /= len(agents)
     loss_results /= len(agents)
 
     # Recording of results.
@@ -218,14 +217,14 @@ def main():
     if noise_value is not None:
         file_name_params.append("{:.3f}_nv".format(noise_value))
     # Then write the results given the parameters.
-    results.write_to_file(
-        directory,
-        "preferences",
-        file_name_params,
-        preference_results,
-        max_iteration,
-        array_data = True
-    )
+    # results.write_to_file(
+    #     directory,
+    #     "preferences",
+    #     file_name_params,
+    #     preference_results,
+    #     max_iteration,
+    #     array_data = True
+    # )
     results.write_to_file(
         directory,
         "loss",
@@ -242,12 +241,12 @@ def main():
 
 if __name__ == "__main__":
     # For standard runs and testing
-    main()
+    # main()
 
-    # for er in evidence_rates:
-    #     evidence_rate = er
-    #     print("Evidence rate: ", evidence_rate)
-    #     main()
+    for er in evidence_rates:
+        evidence_rate = er
+        print("Evidence rate: ", evidence_rate)
+        main()
 
     # for nv in noise_values:
     #     noise_value = nv
