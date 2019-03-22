@@ -10,7 +10,7 @@ from utilities import operators
 from utilities import preferences
 from utilities import results
 
-tests = 1
+tests = 100
 iteration_limit = 10000
 steady_state_threshold = 100
 
@@ -23,7 +23,7 @@ demo_mode = True
 evidence_rates = [0.0, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0]
 # Set a single evidence rate to begin with, in case we don't test the whole list
 # and only want to experiment with a preset evidence rate.
-evidence_rate = 0/100
+evidence_rate = 5/100
 # List of noise values
 noise_values = [0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
 # Default value: None - no noise is added to the simulation. This default is important
@@ -55,7 +55,6 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
     # For each agent, generate a random piece of evidence and have the agent perform
     # evidential updating.
     reached_convergence = True
-    reached_tally = 0
     for agent in agents:
         # Currently, just testing with random evidence.
         evidence = preferences.random_evidence(
@@ -68,12 +67,8 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
         if random_instance.random() <= evidence_rate:
             agent.evidential_updating(operators.combine(agent.preferences, evidence))
 
-        if agent.steady_state(steady_state_threshold):
-            reached_tally += 1
-
         reached_convergence &= agent.steady_state(steady_state_threshold)
 
-    print(reached_tally)
     if reached_convergence:
         return False
     elif evidence_only:
@@ -165,7 +160,7 @@ def main():
     # Repeat the setup and loop for the number of simulation runs required
     max_iteration = 0
     for test in range(tests):
-        print("Test #" + str(test), end="\r")
+        # print("Test #" + str(test), end="\r")
         agents = list()
         # Create an instance of a RNG that is either seeded for consistency of simulation
         # results, or create using a random seed for further testing.
@@ -183,7 +178,8 @@ def main():
         # Main loop of the experiments. Starts at 1 because we have recorded the agents'
         # initial state above, at the "0th" index.
         for iteration in range(1, iteration_limit + 1):
-            print(iteration)
+            print("Test #" + str(test) + " - Iteration #" + str(iteration), end="\r")
+            max_iteration = iteration if iteration > max_iteration else max_iteration
             # While not converged, continue to run the main loop.
             if main_loop(agents, arguments.states, mode, random_instance):
                 for agent in agents:
@@ -195,20 +191,18 @@ def main():
             # If the simulation has converged, end the test.
             else:
                 # print("Converged: ", iteration)
-                max_iteration = iteration if iteration > max_iteration else max_iteration
                 for agent in agents:
                     # prefs = results.identify_preference(agent.preferences)
                     # for pref in prefs:
                     #     preference_results[iteration][test][pref] += 1.0 / len(prefs)
                     loss_results[iteration][test] += results.loss(agent.preferences, true_prefs)
-                # print(iteration)
                 for iter in range(iteration + 1, iteration_limit + 1):
-                    # if iter == iteration + 1:
-                        # print(iter, iteration_limit)
                     # preference_results[iter][test] = np.copy(preference_results[iteration][test])
                     loss_results[iter][test] = np.copy(loss_results[iteration][test])
                 # Simulation has converged, so break main loop.
                 break
+        print()
+        print(max_iteration)
 
     # Post-loop results processing (normalisation).
     # preference_results /= len(agents)
