@@ -10,7 +10,7 @@ from utilities import operators
 from utilities import preferences
 from utilities import results
 
-tests = 100
+tests = 1
 iteration_limit = 10000
 steady_state_threshold = 100
 
@@ -23,12 +23,12 @@ demo_mode = True
 evidence_rates = [0.0, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0]
 # Set a single evidence rate to begin with, in case we don't test the whole list
 # and only want to experiment with a preset evidence rate.
-evidence_rate = 5/100
+evidence_rate = 0/100
 # List of noise values
 noise_values = [0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
 # Default value: None - no noise is added to the simulation. This default is important
 # because noise values can be negative.
-noise_value = None   # None
+noise_value = 1.0   # None
 # Store the generated comparison error values so that we only need to generate them once.
 comparison_errors = []
 
@@ -55,6 +55,7 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
     # For each agent, generate a random piece of evidence and have the agent perform
     # evidential updating.
     reached_convergence = True
+    reached_tally = 0
     for agent in agents:
         # Currently, just testing with random evidence.
         evidence = preferences.random_evidence(
@@ -67,8 +68,12 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
         if random_instance.random() <= evidence_rate:
             agent.evidential_updating(operators.combine(agent.preferences, evidence))
 
+        if agent.steady_state(steady_state_threshold):
+            reached_tally += 1
+
         reached_convergence &= agent.steady_state(steady_state_threshold)
 
+    print(reached_tally)
     if reached_convergence:
         return False
     elif evidence_only:
@@ -78,10 +83,10 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
 
     # Symmetric
     if mode == "symmetric":
-        agent1 = agents[random.randint(0,len(agents) - 1)]
+        agent1 = agents[random_instance.randint(0,len(agents) - 1)]
         agent2 = agent1
         while agent2 == agent1:
-            agent2 = agents[random.randint(0,len(agents) - 1)]
+            agent2 = agents[random_instance.randint(0,len(agents) - 1)]
 
         new_preference = operators.combine(agent1.preferences, agent2.preferences)
         # print(new_preference)
@@ -178,6 +183,7 @@ def main():
         # Main loop of the experiments. Starts at 1 because we have recorded the agents'
         # initial state above, at the "0th" index.
         for iteration in range(1, iteration_limit + 1):
+            print(iteration)
             # While not converged, continue to run the main loop.
             if main_loop(agents, arguments.states, mode, random_instance):
                 for agent in agents:
@@ -240,13 +246,30 @@ def main():
 
 
 if __name__ == "__main__":
-    # For standard runs and testing
-    # main()
 
-    for er in evidence_rates:
-        evidence_rate = er
-        print("Evidence rate: ", evidence_rate)
-        main()
+    # Profiling setup.
+    # import cProfile, pstats, io
+    # from pstats import SortKey
+    # pr = cProfile.Profile()
+    # pr.enable()
+    # END
+
+    # For standard runs and testing:
+    main()
+
+    # Profile post-processing.
+    # pr.disable()
+    # s = io.StringIO()
+    # sortby = SortKey.CUMULATIVE
+    # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+    # ps.print_stats()
+    # print(s.getvalue())
+    # END
+
+    # for er in evidence_rates:
+    #     evidence_rate = er
+    #     print("Evidence rate: ", evidence_rate)
+    #     main()
 
     # for nv in noise_values:
     #     noise_value = nv

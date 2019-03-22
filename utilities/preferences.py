@@ -65,10 +65,10 @@ def random_evidence(states, noise_value, comparison_errors, random_instance):
     """ Generate a random piece of evidence. """
 
     evidence = set()
-    index_i = random_instance.randint(0, states - 1)
-    index_j = index_i
-    while index_j == index_i:
-        index_j = random_instance.randint(0, states - 1)
+    shuffled_states = [x for x in range(states)]
+    random_instance.shuffle(shuffled_states)
+    index_i = shuffled_states.pop()
+    index_j = shuffled_states.pop()
 
     difference = abs(index_i - index_j) - 1
     if noise_value is not None:
