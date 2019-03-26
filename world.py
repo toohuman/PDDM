@@ -28,7 +28,7 @@ evidence_rate = 5/100
 noise_values = [0.0, 1.0, 5.0, 10.0, 20.0, 100.0]
 # Default value: None - no noise is added to the simulation. This default is important
 # because noise values can be negative.
-noise_value = 1.0   # None
+noise_value = None   # None
 # Store the generated comparison error values so that we only need to generate them once.
 comparison_errors = []
 
@@ -46,7 +46,7 @@ def setup(num_of_agents, states, agents: [], random_instance):
 
     return
 
-def main_loop(agents: [], states: int, mode: str, random_instance):
+def main_loop(agents: [], states: int, true_order: [], mode: str, random_instance):
     """
     The main loop performs various actions in sequence until certain conditions are
     met, or the maximum number of iterations is reached.
@@ -59,6 +59,7 @@ def main_loop(agents: [], states: int, mode: str, random_instance):
         # Currently, just testing with random evidence.
         evidence = preferences.random_evidence(
             states,
+            true_order,
             noise_value,
             comparison_errors,
             random_instance
@@ -181,7 +182,7 @@ def main():
             print("Test #" + str(test) + " - Iteration #" + str(iteration), end="\r")
             max_iteration = iteration if iteration > max_iteration else max_iteration
             # While not converged, continue to run the main loop.
-            if main_loop(agents, arguments.states, mode, random_instance):
+            if main_loop(agents, arguments.states, true_order, mode, random_instance):
                 for agent in agents:
                     # prefs = results.identify_preference(agent.preferences)
                     # for pref in prefs:
@@ -202,7 +203,6 @@ def main():
                 # Simulation has converged, so break main loop.
                 break
         print()
-        print(max_iteration)
 
     # Post-loop results processing (normalisation).
     # preference_results /= len(agents)
@@ -241,24 +241,26 @@ def main():
 
 if __name__ == "__main__":
 
+    # For standard runs and testing:
+
     # Profiling setup.
-    # import cProfile, pstats, io
-    # from pstats import SortKey
-    # pr = cProfile.Profile()
-    # pr.enable()
+    import cProfile, pstats, io
+    from pstats import SortKey
+    pr = cProfile.Profile()
+    pr.enable()
     # END
 
-    # For standard runs and testing:
     main()
 
     # Profile post-processing.
-    # pr.disable()
-    # s = io.StringIO()
-    # sortby = SortKey.CUMULATIVE
-    # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-    # ps.print_stats()
-    # print(s.getvalue())
+    pr.disable()
+    s = io.StringIO()
+    sortby = SortKey.CUMULATIVE
+    ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+    ps.print_stats()
+    print(s.getvalue())
     # END
+
 
     # for er in evidence_rates:
     #     evidence_rate = er
