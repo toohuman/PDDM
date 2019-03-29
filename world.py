@@ -133,7 +133,12 @@ def main():
     opposite_prefs = operators.transitive_closure(opposite_prefs)
 
     global comparison_errors
+    comparison_errors = []
+    global evidence_rate
     global noise_value
+
+    print("Evidence rate: ", evidence_rate)
+    print("Noise value:", noise_value)
 
     if noise_value is not None:
         for state in range(1, arguments.states):
@@ -179,7 +184,7 @@ def main():
         # Main loop of the experiments. Starts at 1 because we have recorded the agents'
         # initial state above, at the "0th" index.
         for iteration in range(1, iteration_limit + 1):
-            print("Test #" + str(test) + " - Iteration #" + str(iteration), end="\r")
+            print("Test #" + str(test) + " - Iteration #" + str(iteration) + "  ", end="\r")
             max_iteration = iteration if iteration > max_iteration else max_iteration
             # While not converged, continue to run the main loop.
             if main_loop(agents, arguments.states, true_order, mode, random_instance):
@@ -202,7 +207,7 @@ def main():
                     loss_results[iter][test] = np.copy(loss_results[iteration][test])
                 # Simulation has converged, so break main loop.
                 break
-        print()
+    print()
 
     # Post-loop results processing (normalisation).
     # preference_results /= len(agents)
@@ -244,30 +249,27 @@ if __name__ == "__main__":
     # For standard runs and testing:
 
     # Profiling setup.
-    import cProfile, pstats, io
-    from pstats import SortKey
-    pr = cProfile.Profile()
-    pr.enable()
+    # import cProfile, pstats, io
+    # pr = cProfile.Profile()
+    # pr.enable()
     # END
 
-    main()
+    # main()
 
     # Profile post-processing.
-    pr.disable()
-    s = io.StringIO()
-    sortby = SortKey.CUMULATIVE
-    ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-    ps.print_stats()
-    print(s.getvalue())
+    # pr.disable()
+    # s = io.StringIO()
+    # sortby = 'cumulative'
+    # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+    # ps.print_stats()
+    # print(s.getvalue())
     # END
 
 
     # for er in evidence_rates:
     #     evidence_rate = er
-    #     print("Evidence rate: ", evidence_rate)
     #     main()
 
-    # for nv in noise_values:
-    #     noise_value = nv
-    #     print("Noise value:", noise_value)
-    #     main()
+    for nv in noise_values:
+        noise_value = nv
+        main()

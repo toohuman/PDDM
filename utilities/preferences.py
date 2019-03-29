@@ -61,7 +61,7 @@ def comparison_error(x: float, param: float):
 
 #     return evidence
 
-def random_evidence(states, noise_value, comparison_errors, random_instance):
+def random_evidence(states, true_order, noise_value, comparison_errors, random_instance):
     """ Generate a random piece of evidence. """
 
     evidence = set()
@@ -70,21 +70,24 @@ def random_evidence(states, noise_value, comparison_errors, random_instance):
     index_i = shuffled_states.pop()
     index_j = shuffled_states.pop()
 
-    difference = abs(index_i - index_j) - 1
-    if noise_value is not None:
-        comp_error = comparison_errors[difference]
+    pos_i = true_order.index(index_i)
+    pos_j = true_order.index(index_j)
 
-    best_index = index_i if index_i > index_j else index_j
-    worst_index = index_i if index_i < index_j else index_j
+    if pos_i < pos_j:
+        best_index = index_i
+        worst_index = index_j
+    else:
+        best_index = index_j
+        worst_index = index_i
 
-    # if noise_value is None or random_instance.random() > comp_error:
-    #     evidence[best_index][worst_index] = 1
-    #     evidence[worst_index][best_index] = -1
-    # else:
-    #     evidence[best_index][worst_index] = -1
-    #     evidence[worst_index][best_index] = 1
+    if noise_value is None:
+        evidence.add((best_index, worst_index))
+        return evidence
 
-    if noise_value is None or random_instance.random() > comp_error:
+    difference = abs(pos_i - pos_j) - 1
+    comp_error = comparison_errors[difference]
+
+    if random_instance.random() > comp_error:
         evidence.add((best_index, worst_index))
     else:
         evidence.add((worst_index, best_index))
