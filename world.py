@@ -15,7 +15,7 @@ steady_state_threshold = 100
 
 mode = "symmetric" # ["symmetric" | "asymmetric"]
 evidence_only = False
-demo_mode = True
+demo_mode = False
 
 # List of evidence rates
 # evidence_rates = [0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0]
@@ -147,7 +147,6 @@ def main():
             ))
 
     random_instance = random.Random()
-    # This needs to be fixed using GETSTATE and SETSTATE
     random_instance.seed(128) if arguments.random == None else random_instance.seed()
 
     # Set up the collecting of results
@@ -167,8 +166,6 @@ def main():
     for test in range(tests):
         # print("Test #" + str(test), end="\r")
         agents = list()
-        # Create an instance of a RNG that is either seeded for consistency of simulation
-        # results, or create using a random seed for further testing.
 
         # Initial setup of agents and environment.
         setup(arguments.agents, arguments.states, agents, random_instance)
