@@ -1,5 +1,5 @@
+import math
 import random
-
 
 def ignorant_pref_generator(states):
     """ Returns an empty set of preferences to denote complete uncertainty. """

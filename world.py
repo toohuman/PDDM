@@ -51,8 +51,9 @@ def main_loop(agents: [], states: int, true_order: [], mode: str, random_instanc
     met, or the maximum number of iterations is reached.
     """
 
-    # For each agent, generate a random piece of evidence and have the agent perform
-    # evidential updating.
+    # For each agent, provided that the agent is to receive evidence this iteration
+    # according to the current evidence rate, have the agent perform evidential
+    # updating.
     reached_convergence = True
     for agent in agents:
         # Currently, just testing with random evidence.
@@ -146,6 +147,8 @@ def main():
                 noise_value
             ))
 
+    # Create an instance of a RNG that is either seeded for consistency of simulation
+    # results, or create using a random seed for further testing.
     random_instance = random.Random()
     random_instance.seed(128) if arguments.random == None else random_instance.seed()
 
