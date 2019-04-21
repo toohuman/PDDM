@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import seaborn as sns; sns.set()
+import seaborn as sns; sns.set(font_scale=1.2)
 
 PERC_LOWER = 10
 PERC_UPPER = 90
