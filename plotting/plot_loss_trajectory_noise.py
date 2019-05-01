@@ -68,6 +68,8 @@ for i, states in enumerate(states_set):
         for n, noise in enumerate(noise_levels):
             # if loss_results[n][0] == 0:
             #     continue
+            if loss_results[n][0] == 0:
+                continue
             ax = plt.plot(iterations, loss_results[n], linewidth = 2, color=c[n])
         plt.xlabel("Iterations")
         plt.ylabel("Average Loss")
