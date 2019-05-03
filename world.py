@@ -14,6 +14,7 @@ iteration_limit = 10000
 steady_state_threshold = 100
 
 mode = "symmetric" # ["symmetric" | "asymmetric"]
+form_closure = False
 evidence_only = False
 demo_mode = False
 
@@ -41,7 +42,7 @@ def setup(num_of_agents, states, agents: [], random_instance):
     the creation of agents and the initialisation of relevant variables.
     """
 
-    agents += [Agent(init_preferences(states)) for x in range(num_of_agents)]
+    agents += [Agent(init_preferences(states), form_closure) for x in range(num_of_agents)]
 
     return
 
@@ -218,6 +219,7 @@ def main():
     file_name_params.append("{}_agents".format(arguments.agents))
     file_name_params.append("{}_states".format(arguments.states))
     file_name_params.append("{:.3f}_er".format(evidence_rate))
+    file_name_params.append("no_closure")
     if noise_value is not None:
         file_name_params.append("{:.3f}_nv".format(noise_value))
     # Then write the results given the parameters.

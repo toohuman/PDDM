@@ -6,13 +6,15 @@ class Agent:
     evidence        = int
     interactions    = int
     since_change    = int
+    form_closure = bool
 
-    def __init__(self, preferences):
+    def __init__(self, preferences, form_closure):
 
         self.preferences = preferences
         self.evidence = 0
         self.interactions = 0
         self.since_change = 0
+        self.form_closure = form_closure
 
 
     def steady_state(self, threshold):
@@ -29,7 +31,8 @@ class Agent:
 
         # Form the transitive closure of the combined preference
         # prior to updating.
-        operators.transitive_closure(preferences)
+        if self.form_closure:
+            operators.transitive_closure(preferences)
 
         # Track the number of iterations.
         if preferences == self.preferences:
@@ -50,7 +53,8 @@ class Agent:
 
         # Form the transitive closure of the combined preference
         # prior to updating.
-        operators.transitive_closure(preferences)
+        if self.form_closure:
+            operators.transitive_closure(preferences)
 
         # Track the number of iterations.
         if preferences == self.preferences:
