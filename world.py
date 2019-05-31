@@ -76,9 +76,11 @@ def main_loop(agents: [], states: int, true_order: [], mode: str, random_instanc
     elif evidence_only:
         return True
 
-    # Agents then combine at random
+    # Consensus formation/belief combination:
+    # Agents combine their beliefs at random.
 
-    # Symmetric
+    # Symmetric model: a single pair of agents is selected per iteration
+    # and they both adopt the resulting combination.
     if mode == "symmetric":
         agent1 = agents[random_instance.randint(0,len(agents) - 1)]
         agent2 = agent1
@@ -125,8 +127,8 @@ def main():
     file_name_params = []
 
     true_order = [x for x in reversed(range(arguments.states))]
-    true_prefs = preferences.ignorant_pref_generator(arguments.states)
-    opposite_prefs = preferences.ignorant_pref_generator(arguments.states)
+    true_prefs = init_preferences(arguments.states)
+    opposite_prefs = init_preferences(arguments.states)
     for i in range(len(true_order) - 1):
         true_prefs.add((true_order[i], true_order[i + 1]))
         opposite_prefs.add((true_order[i + 1],true_order[i]))

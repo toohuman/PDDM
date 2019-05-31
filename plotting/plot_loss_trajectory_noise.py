@@ -8,7 +8,7 @@ PERC_UPPER = 90
 
 # states_set = [5, 10, 20, 30, 40, 50]
 # agents_set = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-states_set = [10, 20, 30]
+states_set = [10, 20, 30, 50]
 agents_set = [10, 50, 100]
 evidence_rates = [0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0]
 er = 0.05
@@ -39,7 +39,7 @@ for i, states in enumerate(states_set):
                 noise_input_string += "_{:.3f}_nv".format(noise)
                 noise_output_string += "_{}_nv".format(noise)
 
-            file_name_parts = ["loss", agents, "agents", states, "states", "{:.3f}".format(er), "er", "{:.3f}".format(noise), "nv"]
+            file_name_parts = ["loss", agents, "agents", states, "states", "{:.3f}".format(er), "er_no_closure", "{:.3f}".format(noise), "nv"]
             file_ext = ".csv"
             file_name = "_".join(map(lambda x: str(x), file_name_parts)) + file_ext
 
@@ -76,5 +76,5 @@ for i, states in enumerate(states_set):
         plt.title("{} agents, {} states".format(agents, states))
         plt.legend(noise_levels)
         # plt.show()
-        plt.savefig("../../results/graphs/pddm/{}_agents_{}_states_{}_er.pdf".format(agents, states, er))
+        plt.savefig("../../results/graphs/pddm/{}_agents_{}_states_{}_er_no_closure.pdf".format(agents, states, er))
         plt.clf()
