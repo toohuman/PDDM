@@ -17,6 +17,12 @@ noise_levels = [0, 1, 5, 10, 20, 100]
 
 result_directory = "../../results/test_results/pddm/"
 
+closure = False
+if closure:
+    closure_string = "_no_closure"
+else:
+    closure_string = ""
+
 iterations = [x for x in range(10001)]
 
 for i, states in enumerate(states_set):
@@ -39,7 +45,10 @@ for i, states in enumerate(states_set):
                 noise_input_string += "_{:.3f}_nv".format(noise)
                 noise_output_string += "_{}_nv".format(noise)
 
-            file_name_parts = ["loss", agents, "agents", states, "states", "{:.3f}".format(er), "er_no_closure", "{:.3f}".format(noise), "nv"]
+            if closure:
+                file_name_parts = ["loss", agents, "agents", states, "states", "{:.3f}".format(er), "er", closure_string[1:], "{:.3f}".format(noise), "nv"]
+            else:
+                file_name_parts = ["loss", agents, "agents", states, "states", "{:.3f}".format(er), "er", "{:.3f}".format(noise), "nv"]
             file_ext = ".csv"
             file_name = "_".join(map(lambda x: str(x), file_name_parts)) + file_ext
 
@@ -58,6 +67,7 @@ for i, states in enumerate(states_set):
 
             except FileNotFoundError:
                 # If no file, just skip it.
+                print(file_name)
                 pass
 
         if not results_found:
@@ -75,6 +85,8 @@ for i, states in enumerate(states_set):
         plt.ylabel("Average Loss")
         plt.title("{} agents, {} states".format(agents, states))
         plt.legend(noise_levels)
+        if states == 10:
+            plt.xlim((-30, 1100))
         # plt.show()
-        plt.savefig("../../results/graphs/pddm/{}_agents_{}_states_{}_er_no_closure.pdf".format(agents, states, er))
+        plt.savefig("../../results/graphs/pddm/{}_agents_{}_states_{}_er{}.pdf".format(agents, states, er, closure_string))
         plt.clf()
